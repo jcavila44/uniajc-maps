@@ -1,2 +1,4 @@
 # uniajc-maps
 DESARROLLO DE UNA APLICACIÓN WEB PARA LA INTEGRACIÓN Y EDICIÓN DE MAPAS EN FORMATO GEOJSON 
+
+El presente trabajo tiene como fin desarrollar un sistema web que permita incorporar los mapas en formato GeoJson que exporta QGIS para su edición y consulta. Esto es importante porque permite responder a la necesidad de crear y poder analizar diferentes variables plasmadas en un mapa, de manera eficaz, enfocada hacia los actores que hacen uso de este tipo de técnica (Geo- referenciación) para estudiar diversos aspectos de una población y tomar decisiones entorno a ellas. En este sentido, la implementación de esta herramienta resulta pertinente, debido a que permite optimizar recursos en el proceso de creación y publicación de mapas, generándolos de manera oportuna para cuando se requiere y almacenándolos en un espacio que permite facilmente reencontrarlo.
