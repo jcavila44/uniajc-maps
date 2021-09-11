@@ -1,0 +1,15 @@
+{
+    "name": "jose/uniajc-maps",
+    "description": "Proyecto de grado",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Jose Carlos",
+            "email": "50499480+jcavila44@users.noreply.github.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "phpmailer/phpmailer": "dev-master"
+    }
+}
