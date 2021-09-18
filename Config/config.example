@@ -6,7 +6,7 @@ date_default_timezone_set('America/Bogota');
 const PROJECT_NAME = "UNIAJC MAPS";
 
 //Ruta del proyecto
-const BASE_URL = "http://localhost/uniajc-maps/";
+const BASE_URL = "http://localhost:8080/uniajc-maps/";
 
 
 //Datos de conexion Base de datos
