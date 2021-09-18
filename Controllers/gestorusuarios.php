@@ -34,4 +34,17 @@ class GestorUsuarios extends Controllers
 
 		$this->views->getView($this, "gestorusuarios", $data);
 	}
+
+	//Metodo para obtener todos los usuarios
+	public function obtenerUsuariosController()
+	{
+		if ($_SERVER['REQUEST_METHOD'] == 'GET') {
+			$arrData = $this->model->obtenerUsuariosModel();
+			$arrRespuesta = array('status' => 'success', 'data' => $arrData);
+		} else {
+			$arrRespuesta = array('status' => 'error', 'msg' => 'La peticion HTTP, no corresponde al metodo');
+		}
+		echo json_encode($arrRespuesta, JSON_UNESCAPED_UNICODE);
+		die();
+	}
 }

@@ -1,4 +1,38 @@
+$(document).ready(function () {
+  getAllUsers();
+});
 
+
+
+
+
+
+/*
+    @descripcion    = getAllUsers() es un llamado ajax que permite mostrar todos los usuarios ingresado al sistema
+    @return         = array de los usuarios del sistema
+*/
+
+const getAllUsers = () => {
+
+  $.ajax({
+    url: base_url + 'gestorusuarios/obtenerUsuariosController',
+    type: "GET",
+    data: {},
+    dataType: "json",
+    beforeSend: () => { overlay(true) },
+    success: (objData) => {
+      if (objData.status === "success") {
+        message("Información consultada correctamente", "success");
+      } else {
+        message("Ocurrió un error inesperado, por favor vuelva a intentar", "warning");
+      }
+      console.log("data consultada => ", objData);
+    },
+    error: () => {
+      message("Ocurrió un error en el consumo, por favor revisar los datos enviados", "error");
+    }
+  })
+}
 
 
 const onClickAgregarUsuarios = () => {
