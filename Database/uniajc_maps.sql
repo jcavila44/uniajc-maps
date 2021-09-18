@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.1.1
+-- version 5.0.2
 -- https://www.phpmyadmin.net/
 --
--- Servidor: localhost
--- Tiempo de generación: 18-09-2021 a las 18:42:03
--- Versión del servidor: 10.4.21-MariaDB
--- Versión de PHP: 7.4.23
+-- Servidor: 127.0.0.1
+-- Tiempo de generación: 18-09-2021 a las 22:38:27
+-- Versión del servidor: 10.4.14-MariaDB
+-- Versión de PHP: 7.4.10
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -24,10 +24,10 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `archivoGeoJson`
+-- Estructura de tabla para la tabla `archivogeojson`
 --
 
-CREATE TABLE `archivoGeoJson` (
+CREATE TABLE `archivogeojson` (
   `arch_id` int(11) NOT NULL,
   `arch_caracteristicas` varchar(200) NOT NULL,
   `arch_tipo` varchar(200) NOT NULL,
@@ -69,8 +69,41 @@ CREATE TABLE `capa` (
 
 CREATE TABLE `estado` (
   `estado_id` int(11) NOT NULL,
-  `estado_descripcion` varchar(200) NOT NULL
+  `estado_descripcion` varchar(200) NOT NULL,
+  `est_tip_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Volcado de datos para la tabla `estado`
+--
+
+INSERT INTO `estado` (`estado_id`, `estado_descripcion`, `est_tip_id`) VALUES
+(7, 'usuario activo', 1),
+(8, 'usuario inactivo', 1),
+(9, 'mapa activo', 2),
+(10, 'mapa inactivo', 2),
+(11, 'capa activa', 3),
+(12, 'capa inactiva', 3);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `estado_tipo`
+--
+
+CREATE TABLE `estado_tipo` (
+  `est_tip_id` int(11) NOT NULL,
+  `est_tip_descripcion` varchar(255) COLLATE utf8_spanish_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+
+--
+-- Volcado de datos para la tabla `estado_tipo`
+--
+
+INSERT INTO `estado_tipo` (`est_tip_id`, `est_tip_descripcion`) VALUES
+(1, 'estado usuarios'),
+(2, 'estado mapas'),
+(3, 'estado capas');
 
 -- --------------------------------------------------------
 
@@ -132,6 +165,15 @@ CREATE TABLE `rol` (
   `rol_descripcion` varchar(200) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+--
+-- Volcado de datos para la tabla `rol`
+--
+
+INSERT INTO `rol` (`rol_id`, `rol_descripcion`) VALUES
+(1, 'administrador'),
+(2, 'investigador'),
+(3, 'invitado');
+
 -- --------------------------------------------------------
 
 --
@@ -173,13 +215,21 @@ CREATE TABLE `usuario` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
+-- Volcado de datos para la tabla `usuario`
+--
+
+INSERT INTO `usuario` (`usu_id`, `usu_correo`, `usu_nombre`, `usu_password`, `rol_id`, `est_id`) VALUES
+(1, 'jcavila@estudiante.uniajc.edu.co', 'jose carlos avila', 'prueba', 1, 7),
+(2, 'jjosecastro@estudiante.uniajc.edu.co', 'juan jose castro', 'prueba', 1, 7);
+
+--
 -- Índices para tablas volcadas
 --
 
 --
--- Indices de la tabla `archivoGeoJson`
+-- Indices de la tabla `archivogeojson`
 --
-ALTER TABLE `archivoGeoJson`
+ALTER TABLE `archivogeojson`
   ADD PRIMARY KEY (`arch_id`);
 
 --
@@ -200,7 +250,14 @@ ALTER TABLE `capa`
 -- Indices de la tabla `estado`
 --
 ALTER TABLE `estado`
-  ADD PRIMARY KEY (`estado_id`);
+  ADD PRIMARY KEY (`estado_id`),
+  ADD KEY `estado_tipo_fk_1` (`est_tip_id`);
+
+--
+-- Indices de la tabla `estado_tipo`
+--
+ALTER TABLE `estado_tipo`
+  ADD PRIMARY KEY (`est_tip_id`);
 
 --
 -- Indices de la tabla `mapa`
@@ -266,9 +323,9 @@ ALTER TABLE `usuario`
 --
 
 --
--- AUTO_INCREMENT de la tabla `archivoGeoJson`
+-- AUTO_INCREMENT de la tabla `archivogeojson`
 --
-ALTER TABLE `archivoGeoJson`
+ALTER TABLE `archivogeojson`
   MODIFY `arch_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
@@ -287,7 +344,13 @@ ALTER TABLE `capa`
 -- AUTO_INCREMENT de la tabla `estado`
 --
 ALTER TABLE `estado`
-  MODIFY `estado_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `estado_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+
+--
+-- AUTO_INCREMENT de la tabla `estado_tipo`
+--
+ALTER TABLE `estado_tipo`
+  MODIFY `est_tip_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `mapa`
@@ -317,7 +380,7 @@ ALTER TABLE `permiso`
 -- AUTO_INCREMENT de la tabla `rol`
 --
 ALTER TABLE `rol`
-  MODIFY `rol_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `rol_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `rol_mapa`
@@ -335,7 +398,7 @@ ALTER TABLE `token`
 -- AUTO_INCREMENT de la tabla `usuario`
 --
 ALTER TABLE `usuario`
-  MODIFY `usu_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `usu_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- Restricciones para tablas volcadas
@@ -349,10 +412,16 @@ ALTER TABLE `autor_mapa`
   ADD CONSTRAINT `autor_mapa_ibfk_2` FOREIGN KEY (`usu_id`) REFERENCES `usuario` (`usu_id`);
 
 --
+-- Filtros para la tabla `estado`
+--
+ALTER TABLE `estado`
+  ADD CONSTRAINT `estado_tipo_fk_1` FOREIGN KEY (`est_tip_id`) REFERENCES `estado_tipo` (`est_tip_id`);
+
+--
 -- Filtros para la tabla `mapa`
 --
 ALTER TABLE `mapa`
-  ADD CONSTRAINT `mapa_ibfk_1` FOREIGN KEY (`arch_id`) REFERENCES `archivoGeoJson` (`arch_id`),
+  ADD CONSTRAINT `mapa_ibfk_1` FOREIGN KEY (`arch_id`) REFERENCES `archivogeojson` (`arch_id`),
   ADD CONSTRAINT `mapa_ibfk_2` FOREIGN KEY (`est_id`) REFERENCES `estado` (`estado_id`);
 
 --

@@ -13,10 +13,29 @@
 //               jcavila@estudiante.uniajc.edu.co
 //				Institución Universitaria Antonio Jose Camacho
 //============================================================+
-class LoginModel extends MySQL
+class GestorUsuariosModel extends MySQL
 {
-	public function __construct()
-	{
-		parent::__construct();
-	}
+
+  private $strUsuCorreo;
+  private $strUsuNombre;
+  private $strUsuPassword;
+  private $intRolId;
+  private $intEstadoId;
+
+  public function __construct()
+  {
+    parent::__construct();
+  }
+
+  public function obtenerUsuariosModel()
+  {
+    $consulta = "
+                  SELECT
+                      *
+                  FROM
+                      usuario
+    ";
+    $peticion = $this->SelectAll($consulta);
+    return $peticion;
+  }
 }
