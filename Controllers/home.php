@@ -14,7 +14,8 @@
 //				Institución Universitaria Antonio Jose Camacho
 //============================================================+
 
-class Home extends Controllers
+
+class Home extends Facade
 {
 	public function __construct()
 	{
@@ -35,4 +36,5 @@ class Home extends Controllers
 
 		$this->views->getView($this, "home", $data);
 	}
+
 }

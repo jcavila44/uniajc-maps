@@ -19,7 +19,13 @@
   <!-- Main styles for this application-->
   <link href="<?php echo media(); ?>css/style.css" rel="stylesheet">
   <link href="<?php echo media(); ?>css/pace.min.css" rel="stylesheet">
-
+  <link href="<?php echo media(); ?>css/generalStyles.css" rel="stylesheet">
+  <!-- <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.css"> -->
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.22/css/dataTables.bootstrap4.min.css">
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.2.6/css/responsive.dataTables.min.css">
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/1.6.5/css/buttons.bootstrap4.min.css">
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/select/1.3.1/css/select.bootstrap4.min.css">
+  <link rel="stylesheet" type="text/css" href="https://editor.datatables.net/extensions/Editor/css/editor.dataTables.min.css">
 </head>
 
 <!-- HEAD -->
