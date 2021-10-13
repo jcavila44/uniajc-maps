@@ -13,7 +13,7 @@
 //                    jcavila@estudiante.uniajc.edu.co
 //				Institución Universitaria Antonio Jose Camacho
 //============================================================+
-class Errors extends Controllers
+class Errors extends Facade
 {
     public function __construct()
     {

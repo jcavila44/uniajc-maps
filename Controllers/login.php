@@ -14,7 +14,7 @@
 //				Institución Universitaria Antonio Jose Camacho
 //============================================================+
 
-class Login extends Controllers
+class Login extends Facade
 {
 	public function __construct()
 	{

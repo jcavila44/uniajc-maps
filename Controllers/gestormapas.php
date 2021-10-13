@@ -14,14 +14,14 @@
 //				Institución Universitaria Antonio Jose Camacho
 //============================================================+
 
-class GestorMapas extends Controllers
+
+class GestorMapas extends Facade
 {
 	public function __construct()
 	{
 		session_start();
-		if (!isset($_SESSION['login'])) {
-			header('Location: ' . base_url());
-		}
+		(!isset($_SESSION['login'])) && (header('Location: ' . base_url()));
+		
 		parent::__construct();
 	}
 

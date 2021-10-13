@@ -1,46 +1,33 @@
 <?php headerAdmin($data); ?>
 
 <style>
-  .btn-flotante {
-    font-size: 14px;
-    text-transform: uppercase;
-    font-weight: bold;
-    color: #ffffff !important;
-    border-radius: 5px;
-    letter-spacing: 2px;
-    background-color: #e91e63;
-    padding: 10px 20px;
-    cursor: pointer;
-    position: fixed;
-    bottom: 40px;
-    right: 40px;
-    transition: all 300ms ease 0ms;
-    box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
-    z-index: 99;
-  }
-
-  .btn-flotante:hover {
-    background-color: #2c2fa5;
-    box-shadow: 0px 15px 20px rgba(0, 0, 0, 0.3);
-    transform: translateY(-7px);
-  }
-
-  #mapid {
-    height: 580px;
-  }
-
-  @media only screen and (max-width: 600px) {
-    .btn-flotante {
-      font-size: 14px;
-      padding: 12px 20px;
-      bottom: 20px;
-      right: 20px;
-    }
+  .swal2-html-container {
+    overflow: unset;
   }
 </style>
 
-<div class="col-md-12">
+<div class="col-md-12 mb-5">
   <div class="row">
+
+    <div class="col-12 col-md-12">
+      <div class="card p-4">
+        <div class="row">
+          <div class="col-12 text-center col-md-4">
+            <h4>Gestor de usuarios </h4>
+          </div>
+          <div class="col">
+            <hr />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-12">
+      <div class="card p-4" style="max-height: 400px ; overflow: auto;">
+        <table id="tableGestorUsuarios" class="table table-bordered table-hover"></table>
+      </div>
+    </div>
+
 
   </div>
 
