@@ -36,4 +36,14 @@ class Facade
   {
     return $this->GestorUsuariosModel->saveUsuarioModel($nombreUsuario, $cedulaUsuario, $CorreoUsuario, $rolUsuario);
   }
+
+  public function deleteUsuario($idUsuario)
+  {
+    return $this->GestorUsuariosModel->deleteUsuarioModel($idUsuario);
+  }
+
+  public function updateUsuario($nombreUsuario, $cedulaUsuario, $CorreoUsuario, $rolUsuario, $usu_id)
+  {
+    return $this->GestorUsuariosModel->updateUsuarioModel($nombreUsuario, $cedulaUsuario, $CorreoUsuario, $rolUsuario, $usu_id);
+  }
 }

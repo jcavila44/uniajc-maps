@@ -34,13 +34,17 @@ const getAllUsers = () => {
                 <th>Correo</th>
                 <th>Estado</th>
                 <th>Rol</th>
-                <th>Gestionar</th>
+                <th>Eliminar</th>
+                <th>Actualizar</th>
               </tr>
             </thead>
             <tbody>
         `;
 
         objData.data.forEach((element, key) => {
+
+          let jsonInfo = JSON.stringify(element);
+
           htmlTable += `
             <tr>
               <td> ${key} </td>
@@ -49,7 +53,8 @@ const getAllUsers = () => {
               <td> ${element.usu_correo.toLowerCase()} </td>
               <td> ${firstLetterUppercase(element.rol_descripcion)} </td>
               <td> ${firstLetterUppercase(element.estado_descripcion)} </td>
-              <td> <button class="btn btn-primary">Gestionar</button> </td>
+              <td> <button onclick='onClickEliminarUsuario(${jsonInfo})' class="btn btn-primary">Eliminar</button> </td>
+              <td> <button onclick='onClickActualizarUsuario(${jsonInfo})' class="btn btn-primary">Actualizar</button> </td>
             </tr>
           `;
         });
@@ -132,14 +137,6 @@ const onClickAgregarUsuarios = () => {
 
       guardarInformacionUsuario(allData);
 
-      Swal.fire({
-        icon: 'success',
-        html: '<h3>Usuario agregado correctamente!</h3>',
-        showConfirmButton: true,
-        confirmButtonText: 'Continuar',
-        confirmButtonColor: '#0069d9',
-        showCancelButton: false,
-      });
     }
 
 
@@ -200,3 +197,151 @@ const guardarInformacionUsuario = ({ nombreUsuario, cedulaUsuario, CorreoUsuario
   });
 
 }
+
+
+
+const onClickEliminarUsuario = ({ usu_id, usu_nombre }) => {
+
+
+  Swal.fire({
+    title: 'Inhabilitar usuario',
+    html: `<h4>¿Está seguro de eliminar al usuario ${wordToCamelCase(usu_nombre)}? </h4>`,
+    showCancelButton: true,
+    confirmButtonText: 'Eliminar',
+    confirmButtonColor: '#4dbd74',
+    cancelButtonText: 'Cancelar',
+    cancelButtonColor: '#6c757d',
+    width: '700px'
+  }).then((result) => {
+    if (result.value) { inhabilitarUsuario(usu_id) }
+  });
+
+}
+
+
+const inhabilitarUsuario = (idUsuario) => {
+
+  $.ajax({
+    async: true,
+    url: base_url + 'gestorusuarios/deleteUserController',
+    type: "POST",
+    data: {
+      idUsuario: parseInt(idUsuario),
+    },
+    dataType: "json",
+    beforeSend: () => { overlay(true) },
+    success: (objData) => {
+      if (objData.status === "success") {
+        message("Usuario eliminado correctamente", "success");
+        getAllUsers();
+
+      } else {
+        message("Ocurrió un error inesperado, por favor vuelva a intentar", "warning");
+      }
+
+    },
+    error: (error) => {
+      message("Ocurrió un error en la eliminacion, por favor revisar los datos enviados", "error");
+    }
+  });
+
+}
+
+
+
+const onClickActualizarUsuario = ({ rol_descripcion, usu_cedula, usu_correo, usu_id, usu_nombre }) => {
+
+  let optionsRoles = consultarRolesUsuarios().map(({ rol_id, rol_descripcion: rol_desc }) => {
+
+    return `<option ${(rol_desc === rol_descripcion) && ("selected")} value="${rol_id}">${firstLetterUppercase(rol_desc)}</option>`;
+  });
+
+  const htmlModal = `
+    <div class="col-mb-12" style="font-size: 14px; text-align: left;">
+      <div class="row">
+        <div class="col-md-6 mb-2">
+          <label for="name">Nombres y apellido</label>
+          <input value="${usu_nombre}" class="form-control" id="nombreUsuario" name="nombreUsuario" type="text" placeholder="Nombres y apellidos del usuario">
+        </div>
+        <div class="col-md-6 mb-3">
+          <label for="name">Cédula</label>
+          <input value="${usu_cedula}" class="form-control" id="cedulaUsuario" name="cedulaUsuario" type="text" placeholder="Cédula del usuario">
+        </div>
+        <div class="col-md-6 mb-3">
+          <label for="name">Correo</label>
+          <input value="${usu_correo}" class="form-control" id="CorreoUsuario" name="CorreoUsuario" type="email" placeholder="Correo del usuario">
+        </div>
+        <div class="col-md-6 mb-2">
+          <label for="rolUsuario">Rol</label>
+          <select class="form-control" id="rolUsuario" name="rolUsuario">
+              <option disabled selected>Seleccione...</option>
+              ${optionsRoles} 
+          </select>
+        </div>
+      </div>
+    </div>
+  `;
+
+  Swal.fire({
+    title: 'Actualización de usuario',
+    html: htmlModal,
+    showCancelButton: true,
+    confirmButtonText: 'Actualizar',
+    confirmButtonColor: '#4dbd74',
+    cancelButtonText: 'Cancelar',
+    cancelButtonColor: '#6c757d',
+    width: '700px'
+  }).then((result) => {
+
+    const allData = {
+      nombreUsuario: $("#nombreUsuario").val(),
+      cedulaUsuario: $("#cedulaUsuario").val(),
+      CorreoUsuario: $("#CorreoUsuario").val(),
+      rolUsuario: $("#rolUsuario").val(),
+      usu_id
+    }
+
+    if (result.value) {
+
+      actualizarInformacionUsuario(allData);
+
+    }
+
+
+  });
+
+}
+
+
+const actualizarInformacionUsuario = ({ nombreUsuario, cedulaUsuario, CorreoUsuario, rolUsuario, usu_id }) => {
+
+  $.ajax({
+    async: true,
+    url: base_url + 'gestorusuarios/actualizarInfoUserController',
+    type: "POST",
+    data: {
+      nombreUsuario: String(nombreUsuario),
+      cedulaUsuario: String(cedulaUsuario),
+      CorreoUsuario: String(CorreoUsuario),
+      rolUsuario: parseInt(rolUsuario),
+      usu_id: parseInt(usu_id),
+    },
+    dataType: "json",
+    beforeSend: () => { overlay(true) },
+    success: (objData) => {
+      if (objData.status === "success") {
+        message("Usuario actualizado correctamente", "success");
+        getAllUsers();
+
+      } else {
+        message("Ocurrió un error inesperado, por favor vuelva a intentar", "warning");
+      }
+
+    },
+    error: (error) => {
+      message("Ocurrió un error en la actualización, por favor revisar los datos enviados", "error");
+    }
+  });
+
+}
+
