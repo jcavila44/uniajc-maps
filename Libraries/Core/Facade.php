@@ -46,4 +46,9 @@ class Facade
   {
     return $this->GestorUsuariosModel->updateUsuarioModel($nombreUsuario, $cedulaUsuario, $CorreoUsuario, $rolUsuario, $usu_id);
   }
+
+  public function consultarUsuarioLogin($CorreoUsuario)
+  {
+    return $this->LoginModel->consultarUsuarioLoginModel($CorreoUsuario);
+  }
 }

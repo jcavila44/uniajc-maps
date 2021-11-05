@@ -21,7 +21,7 @@ class Home extends Facade
 	{
 		session_start();
 		if (!isset($_SESSION['login'])) {
-			header('Location: ' . base_url());
+			header('Location: ' . base_url() . "/Logout");
 		}
 		parent::__construct();
 	}
@@ -36,5 +36,4 @@ class Home extends Facade
 
 		$this->views->getView($this, "home", $data);
 	}
-
 }

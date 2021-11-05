@@ -19,15 +19,14 @@ class Login extends Facade
 	public function __construct()
 	{
 		session_start();
-		// if (isset($_SESSION['login'] )) {
-		// 	header('Location: ' . base_url() . 'home');
-		// }
+		if (isset($_SESSION['login'] )) {
+			header('Location: ' . base_url() . 'home');
+		}
 		parent::__construct();
 	}
 
 	public function login()
 	{
-		$_SESSION['login'] = true;
 		$data['page_id'] = 1;
 		$data['page_tag'] = 'Login';
 		$data['page_title'] = 'Login';
@@ -59,4 +58,41 @@ class Login extends Facade
 		$this->views->getView($this, "userprofile", $data);
 	}
 
+	public function loginUser()
+	{
+		if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+			if (!empty($_POST['correo']) || !empty($_POST['contrasena'])) {
+
+				$correo = limpiar_cadena($_POST['correo']);
+				$contrasena = limpiar_cadena($_POST['password']);
+				$ObtenerUsuario = $this->consultarUsuarioLogin($correo);
+
+				if (
+					$ObtenerUsuario &&
+					$correo == $ObtenerUsuario['usu_correo'] &&
+					password_verify($contrasena, $ObtenerUsuario['usu_password'])
+				) {
+					if ($ObtenerUsuario['estado_id'] == 7) {
+
+						$_SESSION['login'] = true;
+						$_SESSION['idusuario'] = $ObtenerUsuario['usu_id'];
+						$_SESSION['correo'] = $ObtenerUsuario['usu_correo'];
+						$_SESSION['nombre'] = $ObtenerUsuario['usu_nombre'];
+						$_SESSION['cedula'] = $ObtenerUsuario['usu_cedula'];
+						$_SESSION['rol'] = $ObtenerUsuario['rol_descripcion'];
+						$arrRespuesta = array('status' => 'success', 'msg' => 'Inicio de sesión exitoso');
+					} else {
+						$arrRespuesta = array('status' => 'success', 'msg' => 'Usuario inhabilitado');
+					}
+				} else {
+					$arrRespuesta = array('status' => 'warning', 'msg' => 'Usuario no encontrado o credenciales no coinciden');
+				}
+			} else {
+				$arrRespuesta = array('status' => 'error', 'msg' => 'Los datos estan vacios');
+			}
+		} else {
+			$arrRespuesta = array('status' => 'error', 'msg' => 'La peticion HTTP, no corresponde al metodo');
+		}
+		echo json_encode($arrRespuesta, JSON_UNESCAPED_UNICODE);
+	}
 }

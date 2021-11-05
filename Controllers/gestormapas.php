@@ -20,7 +20,9 @@ class GestorMapas extends Facade
 	public function __construct()
 	{
 		session_start();
-		(!isset($_SESSION['login'])) && (header('Location: ' . base_url()));
+		if (!isset($_SESSION['login'])) {
+			header('Location: ' . base_url() . "/Logout");
+		}
 		
 		parent::__construct();
 	}
