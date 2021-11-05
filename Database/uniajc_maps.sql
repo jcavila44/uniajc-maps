@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 18-09-2021 a las 22:38:27
+-- Tiempo de generación: 05-11-2021 a las 05:50:25
 -- Versión del servidor: 10.4.14-MariaDB
 -- Versión de PHP: 7.4.10
 
@@ -207,6 +207,7 @@ CREATE TABLE `token` (
 
 CREATE TABLE `usuario` (
   `usu_id` int(11) NOT NULL,
+  `usu_cedula` varchar(255) DEFAULT NULL,
   `usu_correo` varchar(50) NOT NULL,
   `usu_nombre` varchar(50) NOT NULL,
   `usu_password` text NOT NULL,
@@ -218,9 +219,20 @@ CREATE TABLE `usuario` (
 -- Volcado de datos para la tabla `usuario`
 --
 
-INSERT INTO `usuario` (`usu_id`, `usu_correo`, `usu_nombre`, `usu_password`, `rol_id`, `est_id`) VALUES
-(1, 'jcavila@estudiante.uniajc.edu.co', 'jose carlos avila', 'prueba', 1, 7),
-(2, 'jjosecastro@estudiante.uniajc.edu.co', 'juan jose castro', 'prueba', 1, 7);
+INSERT INTO `usuario` (`usu_id`, `usu_cedula`, `usu_correo`, `usu_nombre`, `usu_password`, `rol_id`, `est_id`) VALUES
+(1, '1144211277', 'jcavila@estudiante.uniajc.edu.co', 'jose carlos avila perea', '$2y$10$3GgidhDfOO/3PziXIOQbzuZgVldqf2JTEQKZz3f5/2JBAEVxQj9Im', 2, 7),
+(2, '321', 'jjosecastro@estudiante.uniajc.edu.co', 'juan jose castro', 'prueba', 1, 7),
+(5, '123123', 'qwsa@dsa.com', 'prueba', '12vjy8B6VZQUU', 1, 8),
+(6, '123', 'sdad@dsa.com', 'joseeeeee', '12IbR.gJ8wcpc', 1, 7),
+(7, '33322', 'j@dsa.com', 'luis', '12FCJcNcrAhSE', 1, 8),
+(8, 'j', 'j', 'j', '12BtqRyU8HrpU', 1, 7),
+(9, 'j', 'j', 'j', '12BtqRyU8HrpU', 1, 7),
+(10, 'j', 'd', 'j', '12BtqRyU8HrpU', 1, 7),
+(11, 'k', 'k', 'k', '12ETMWicNpIZU', 1, 7),
+(12, 'k', 'k', 'k', '12ETMWicNpIZU', 1, 8),
+(13, 'ii', 'ii', 'ii', '12BfgCTRc9fPM', 1, 7),
+(14, 'k', 'k', 'm', '12ETMWicNpIZU', 1, 8),
+(15, '999999', '99@99.com', 'prueba 99', '122lD5TCwBq22', 1, 8);
 
 --
 -- Índices para tablas volcadas
@@ -398,7 +410,7 @@ ALTER TABLE `token`
 -- AUTO_INCREMENT de la tabla `usuario`
 --
 ALTER TABLE `usuario`
-  MODIFY `usu_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `usu_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- Restricciones para tablas volcadas
