@@ -22,6 +22,7 @@ class GestorUsuariosModel extends MySQL
   private string $strUsuPassword;
   private int $intRolId;
   private int $intEstadoId;
+  private int $intUsuId;
 
   public function __construct()
   {
@@ -30,7 +31,7 @@ class GestorUsuariosModel extends MySQL
 
   public function obtenerUsuariosModel()
   {
-    $consulta = "SELECT 
+    $query = "SELECT 
                     usuario.usu_id,
                     usuario.usu_correo,
                     usuario.usu_nombre,
@@ -44,15 +45,16 @@ class GestorUsuariosModel extends MySQL
                   WHERE 
                     usuario.est_id = estado.estado_id AND 
                     usuario.rol_id = rol.rol_id
+                  GROUP BY usuario.usu_id DESC
     ";
-    $peticion = $this->SelectAll($consulta);
+    $peticion = $this->SelectAll($query);
     return $peticion;
   }
 
   public function getRolesModel()
   {
-    $consulta = "SELECT * FROM rol";
-    $peticion = $this->SelectAll($consulta);
+    $query = "SELECT * FROM rol";
+    $peticion = $this->SelectAll($query);
     return $peticion;
   }
 
@@ -66,7 +68,7 @@ class GestorUsuariosModel extends MySQL
     $this->intEstadoId = 7;
     $this->strUsuPassword = crypt($cedulaUsuario, '123');
 
-    $consulta = "INSERT INTO 
+    $query = "INSERT INTO 
                   `usuario` 
                     (
                       usu_cedula, 
@@ -94,7 +96,61 @@ class GestorUsuariosModel extends MySQL
     );
 
 
-    $peticion = $this->Insert($consulta, $arrInformacion);
+    $peticion = $this->Insert($query, $arrInformacion);
+
+    return $peticion;
+  }
+
+  public function deleteUsuarioModel(int $idUsuario)
+  {
+
+    $this->intEstadoId = 8;
+    $this->intUsuId = $idUsuario;
+
+    $query = "UPDATE 
+                  usuario 
+                 SET 
+                  est_id = ?
+                 WHERE 
+                  usuario.usu_id = ?
+                ";
+
+    $arrInformacion = array($this->intEstadoId, $this->intUsuId);
+    $peticion = $this->Update($query, $arrInformacion);
+
+    return $peticion;
+  }
+
+  public function updateUsuarioModel(string $nombreUsuario, string $cedulaUsuario, string $CorreoUsuario, int $rolUsuario, int $usu_id)
+  {
+
+    $this->strUsuNombre = $nombreUsuario;
+    $this->strUsuCedula = $cedulaUsuario;
+    $this->strUsuCorreo = $CorreoUsuario;
+    $this->intRolId = $rolUsuario;
+    $this->intUsuId = $usu_id;
+
+    $query = "UPDATE  
+                usuario
+              SET
+                usuario.usu_nombre = ?,
+                usuario.usu_cedula = ?,
+                usuario.usu_correo = ?,
+                usuario.rol_id = ?
+              WHERE 
+                usuario.usu_id = ?
+";
+
+    $arrInformacion = array(
+      $this->strUsuNombre,
+      $this->strUsuCedula,
+      $this->strUsuCorreo,
+      $this->intRolId,
+      $this->intUsuId
+    );
+
+
+    $peticion = $this->Update($query, $arrInformacion);
 
     return $peticion;
   }

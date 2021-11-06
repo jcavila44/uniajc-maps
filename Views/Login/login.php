@@ -17,15 +17,15 @@ $data['page_functions_js'] = 'function_login.js';
         <div class="card-group">
           <div class="card p-4">
             <div class="card-body">
-              <h1>Login</h1>
-              <p class="text-muted">Sign In to your account</p>
+              <h1>Inicio de sesión</h1>
+              <p class="text-muted">Ingresa el correo y la contraseña para ingresar al sistema.</p>
               <div class="input-group mb-3">
                 <div class="input-group-prepend">
                   <span class="input-group-text">
                     <i class="icon-user"></i>
                   </span>
                 </div>
-                <input class="form-control" type="text" placeholder="Username">
+                <input id="correo" name="correo" class="form-control" type="text" placeholder="Correo" value="jcavila@estudiante.uniajc.edu.co">
               </div>
               <div class="input-group mb-4">
                 <div class="input-group-prepend">
@@ -33,13 +33,11 @@ $data['page_functions_js'] = 'function_login.js';
                     <i class="icon-lock"></i>
                   </span>
                 </div>
-                <input class="form-control" type="password" placeholder="Password">
+                <input id="password" name="password" class="form-control" type="password" placeholder="Contraseña" value="1144211277">
               </div>
               <div class="row">
                 <div class="col-6">
-                  <a href="<?php echo ROUTES['app']['Home'] ?>">
-                    <button class="btn btn-primary px-4" type="button">Ingresar</button>
-                  </a>
+                  <button onclick="onClickIngresar()" class="btn btn-primary px-4" type="button">Ingresar</button>
                 </div>
                 <div class="col-6 text-right">
                   <button class="btn btn-link px-0" type="button">Forgot password?</button>
