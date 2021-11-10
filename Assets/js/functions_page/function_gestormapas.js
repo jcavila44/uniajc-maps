@@ -2,48 +2,36 @@
 const AddMapas = () => {
 
   const htmlModal = `
-            <div class="col-mb-12" style="font-size: 14px; text-align: left;">
-              <div class="row">
-                <div class="col-md-12 mb-2">
-                  <label for="name">Nombre del mapa</label>
-                  <input class="form-control" id="nombreMapa" name="nombreMapa" type="text" placeholder="Nombre del mapa">
-                </div>
-                <div class="col-md-12 mb-2">
-                  <label for="name">Capa</label>
-                  <div class="row">
-                    <div class="col-md-12 mb-2">
-                      <input class="form-control" id="nombreCapa" name="nombreCapa" type="text" placeholder="Nombre de la capa">
-                    </div>
-                    <div class="col-md-12">
-                      <input id="fileMapa" name="fileMapa" type="file">
-                    </div>
+            <div class="col-mb-12 m-2 p-2" style="font-size: 14px; text-align: left; overflow: hidden;">
+              <form id="formAgregarMapa">
+                <div class="row">
+                  <div class="col-md-12 mb-2">
+                    <label for="name">Nombre del mapa</label>
+                    <input class="form-control" id="nombreMapa" name="nombreMapa" type="text" placeholder="Nombre del mapa">
+                  </div>
+                  <div class="col-md-12 mb-2">
+                    <label for="name">Subir mapa</label>
+                    <input class="form-control" id="mapaZip" name="mapaZip" type="file" accept=".zip">
+                  </div>
+                  <div class="col-md-12 mb-2">
+                    <label for="name">Descripción del mapa</label>
+                    <textarea style="resize: none;" class="form-control" id="descripcionMapa" name="descripcionMapa" rows="2" placeholder="Descripción del mapa"></textarea>
+                  </div>
+                  <div class="col-md-12 mb-2">
+                    <br>
+                    <button onclick="onSubmitFormularioAgregarMapa()" type="button" class="btn btn-success">Guardar</button>
                   </div>
                 </div>
-                <div class="col-md-12 mb-2">
-                  <label for="name">Descripción del mapa</label>
-                  <textarea style="resize: none;" class="form-control" id="descripcionMapa" name="descripcionMapa" rows="2" placeholder="Descripción del mapa"></textarea>
-                </div>
-                <div class="col-md-12 mb-2">
-                  <label for="select1">Estado</label>
-                  <select class="form-control" id="select1" name="select1">
-                      <option disabled selected>Seleccione...</option>
-                      <option value="1">Option #1</option>
-                      <option value="2">Option #2</option>
-                      <option value="3">Option #3</option>
-                  </select>
-                </div>
-              </div>
+              </form>
             </div>
     `;
 
   Swal.fire({
     title: 'Agregar Mapa',
     html: htmlModal,
-    showCancelButton: true,
-    confirmButtonText: 'Guardar',
-    confirmButtonColor: '#4dbd74',
-    cancelButtonText: 'Cancelar',
-    cancelButtonColor: '#6c757d',
+    showCancelButton: false,
+    showConfirmButton: false,
+    showCloseButton: true,
   }).then((result) => {
     if (result.value) {
       Swal.fire({
@@ -95,4 +83,41 @@ const verMapa = (data) => {
       console.log("abrio la modal");
     },
   });
+}
+
+
+const onSubmitFormularioAgregarMapa = () => {
+
+  try {
+
+    var formulario = new FormData(document.getElementById('formAgregarMapa'));
+    $.ajax({
+      type: 'POST',
+      url: base_url + 'gestormapas/addMapa',
+      data: formulario,
+      cache: false,
+      contentType: false,
+      processData: false,
+      method: 'POST',
+      async: false,
+      enctype: 'multi part/form-data',
+      dataType: "json",
+      beforeSend: () => { overlay(true) },
+      success: function ({ status = null, msg = null, data = null }) {
+        message(msg, status);
+
+        if (status == 'success') {
+        }
+
+      },
+      error: () => {
+        message("Ocurrió un error, por favor revisar los datos enviados", "error");
+      }
+    });
+
+  } catch (e) {
+    throw new Error(e.message);
+  }
+
+
 }

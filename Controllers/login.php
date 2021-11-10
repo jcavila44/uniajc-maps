@@ -147,7 +147,7 @@ class Login extends Facade
 				$mail = new PHPMailer(true);
 
 				try {
-					$mail->SMTPDebug = 2;
+					// $mail->SMTPDebug = 2;
 					$mail->isSMTP();
 					$mail->Host       = 'smtp.office365.com;';
 					$mail->SMTPAuth   = true;
@@ -164,8 +164,9 @@ class Login extends Facade
 					$mail->Subject = 'Subject';
 					$mail->Body    = 'Hola ' . $correo . ' este es tu link de recuperacion de la contraseña <b>www.google.com/</b> ';
 					$mail->AltBody = 'Body in plain text for non-HTML mail clients';
+					$enviar = $mail->send();
 
-					$arrRespuesta = array('status' => 'success', 'msg' => 'El correo se ha enviado correctamente2', 'data' => $mail->send());
+					$arrRespuesta = array('status' => 'success', 'msg' => 'El correo se ha enviado correctamente2', 'data' => $enviar);
 				} catch (Exception $e) {
 					$arrRespuesta = array('status' => 'error', 'msg' => 'El correo no se ha enviado correctamente ' . $mail->ErrorInfo . '');
 				}
