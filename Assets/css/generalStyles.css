@@ -43,6 +43,10 @@ background-image: url("https://www.tailorbrands.com/wp-content/uploads/2020/07/t
   height: 580px;
 }
 
+input[type="file"].form-control{
+  padding: 0.7%;
+}
+
 @media only screen and (max-width: 600px) {
   .btn-flotante {
     font-size: 14px;
