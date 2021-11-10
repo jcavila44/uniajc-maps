@@ -51,4 +51,8 @@ class Facade
   {
     return $this->LoginModel->consultarUsuarioLoginModel($CorreoUsuario);
   }
+  public function consultarUsuarioRecoverPassword($CorreoUsuario)
+  {
+    return $this->LoginModel->consultarUsuarioRecoverPasswordModel($CorreoUsuario);
+  }
 }

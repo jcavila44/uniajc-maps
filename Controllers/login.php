@@ -14,13 +14,24 @@
 //				Institución Universitaria Antonio Jose Camacho
 //============================================================+
 
+
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
+require 'vendor/autoload.php';
+
 class Login extends Facade
 {
 	public function __construct()
 	{
 		session_start();
-		if (isset($_SESSION['login'] )) {
+		if (isset($_SESSION['login'])) {
 			header('Location: ' . base_url() . 'home');
+		} else {
+
+			if (isset($_SESSION['ForgotEmailSended']) && $_SESSION['ForgotEmailSended'] == 1) {
+				header('Location: ' . base_url() . 'login/emailSendForgotPassword');
+			}
 		}
 		parent::__construct();
 	}
@@ -35,6 +46,33 @@ class Login extends Facade
 		$data['page_header'] = 0;
 
 		$this->views->getView($this, "login", $data);
+	}
+
+	public function forgotPassword()
+	{
+		$data['page_id'] = 1;
+		$data['page_tag'] = 'Forgot Password';
+		$data['page_title'] = 'Forgot Password';
+		$data['page_name'] = 'Pagina principal';
+		$data['page_functions_js'] = 'function_login.js';
+		$data['page_header'] = 0;
+
+		$this->views->getView($this, "forgotPassword", $data);
+	}
+
+	public function emailSendForgotPassword()
+	{
+		$data['page_id'] = 1;
+		$data['page_tag'] = 'Email Sended';
+		$data['page_title'] = 'Email Sended';
+		$data['page_name'] = 'Pagina principal';
+		$data['page_functions_js'] = 'function_login.js';
+		$data['page_header'] = 0;
+		$data['emailUser'] = $_SESSION['emailUser'];
+		$_SESSION['ForgotEmailSended'] = 0;
+
+
+		$this->views->getView($this, "emailSendForgotPassword", $data);
 	}
 
 	public function logout()
@@ -89,6 +127,50 @@ class Login extends Facade
 				}
 			} else {
 				$arrRespuesta = array('status' => 'error', 'msg' => 'Los datos estan vacios');
+			}
+		} else {
+			$arrRespuesta = array('status' => 'error', 'msg' => 'La peticion HTTP, no corresponde al metodo');
+		}
+		echo json_encode($arrRespuesta, JSON_UNESCAPED_UNICODE);
+	}
+
+	public function recoverPassword()
+	{
+		if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+			$correo = $_POST['correo'];
+
+			$ObtenerUsuario = $this->consultarUsuarioRecoverPassword($correo);
+			if ($ObtenerUsuario && $correo == $ObtenerUsuario['usu_correo']) {
+				$_SESSION['ForgotEmailSended'] = 1;
+				$_SESSION['emailUser'] = $correo;
+
+				$mail = new PHPMailer(true);
+
+				try {
+					$mail->SMTPDebug = 2;
+					$mail->isSMTP();
+					$mail->Host       = 'smtp.office365.com;';
+					$mail->SMTPAuth   = true;
+					$mail->Username   = 'jjosecastro@estudiante.uniajc.edu.co';
+					$mail->Password   = '990804Cafeto6';
+					$mail->SMTPSecure = 'tls';
+					$mail->Port       = 587;
+
+					$mail->setFrom('jjosecastro@estudiante.uniajc.edu.co', 'Juan Jose Castro Cruz');
+					$mail->addAddress('juanjosecastrocruz@gmail.com');
+					$mail->addAddress('jjcastro601@misena.edu.co', 'Juanjo');
+
+					$mail->isHTML(true);
+					$mail->Subject = 'Subject';
+					$mail->Body    = 'Hola ' . $correo . ' este es tu link de recuperacion de la contraseña <b>www.google.com/</b> ';
+					$mail->AltBody = 'Body in plain text for non-HTML mail clients';
+
+					$arrRespuesta = array('status' => 'success', 'msg' => 'El correo se ha enviado correctamente2', 'data' => $mail->send());
+				} catch (Exception $e) {
+					$arrRespuesta = array('status' => 'error', 'msg' => 'El correo no se ha enviado correctamente ' . $mail->ErrorInfo . '');
+				}
+			} else {
+				$arrRespuesta = array('status' => 'error', 'msg' => 'El usuario no fue encontrado');
 			}
 		} else {
 			$arrRespuesta = array('status' => 'error', 'msg' => 'La peticion HTTP, no corresponde al metodo');
