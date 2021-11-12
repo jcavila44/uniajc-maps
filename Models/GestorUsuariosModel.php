@@ -154,4 +154,26 @@ class GestorUsuariosModel extends MySQL
 
     return $peticion;
   }
+
+  public function updatePassword($usu_id, $password)
+  {
+    $this->intUsuId = $usu_id;
+    $this->strUsuPassword = $password;
+
+    $query = "UPDATE 
+                usuario
+              SET
+                usuario.usu_password = ?
+              WHERE
+              usuario.usu_id = ?
+              ";
+    $arrInformacion = array(
+      $this->strUsuPassword,
+      $this->intUsuId,
+    );
+
+    $peticion = $this->Update($query, $arrInformacion);
+
+    return $peticion;
+  }
 }

@@ -1,8 +1,8 @@
-body{
+body {
   background-color: rgb(247, 248, 249);
 }
 
-table.dataTable{
+table.dataTable {
   width: 100%;
 }
 
@@ -11,8 +11,8 @@ table.dataTable{
   box-shadow: 0 1px 2px 0 rgb(60 64 67 / 30%), 0 1px 3px 1px rgb(60 64 67 / 15%);
 }
 
-.bg-image-vum{
-background-image: url("https://www.tailorbrands.com/wp-content/uploads/2020/07/twitter-logo.jpg");
+.bg-image-vum {
+  background-image: url("https://www.tailorbrands.com/wp-content/uploads/2020/07/twitter-logo.jpg");
 }
 
 .btn-flotante {
@@ -43,7 +43,7 @@ background-image: url("https://www.tailorbrands.com/wp-content/uploads/2020/07/t
   height: 580px;
 }
 
-input[type="file"].form-control{
+input[type="file"].form-control {
   padding: 0.7%;
 }
 
@@ -54,4 +54,8 @@ input[type="file"].form-control{
     bottom: 20px;
     right: 20px;
   }
+}
+
+.cursor-pointer {
+  cursor: pointer;
 }

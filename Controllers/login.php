@@ -19,16 +19,16 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
 require 'vendor/autoload.php';
+require_once('./Helpers/Helpers.php');
 
 class Login extends Facade
 {
 	public function __construct()
 	{
 		session_start();
-		if (isset($_SESSION['login'])) {
+		if (isset($_SESSION['login']) || isset($_SESSION["LoginTime"])) {
 			header('Location: ' . base_url() . 'home');
 		} else {
-
 			if (isset($_SESSION['ForgotEmailSended']) && $_SESSION['ForgotEmailSended'] == 1) {
 				header('Location: ' . base_url() . 'login/emailSendForgotPassword');
 			}
@@ -50,6 +50,8 @@ class Login extends Facade
 
 	public function forgotPassword()
 	{
+		session_unset();
+		session_destroy();
 		$data['page_id'] = 1;
 		$data['page_tag'] = 'Forgot Password';
 		$data['page_title'] = 'Forgot Password';
@@ -144,10 +146,14 @@ class Login extends Facade
 				$_SESSION['ForgotEmailSended'] = 1;
 				$_SESSION['emailUser'] = $correo;
 
+				$data = generate_Token($correo);
+				$this->saveTokenModel($data['dateNow'], $data['expDate'], $data['token'], $ObtenerUsuario['usu_id']);
+
+
+
 				$mail = new PHPMailer(true);
 
 				try {
-					// $mail->SMTPDebug = 2;
 					$mail->isSMTP();
 					$mail->Host       = 'smtp.office365.com;';
 					$mail->SMTPAuth   = true;
@@ -157,16 +163,15 @@ class Login extends Facade
 					$mail->Port       = 587;
 
 					$mail->setFrom('jjosecastro@estudiante.uniajc.edu.co', 'Juan Jose Castro Cruz');
-					$mail->addAddress('juanjosecastrocruz@gmail.com');
-					$mail->addAddress('jjcastro601@misena.edu.co', 'Juanjo');
+					$mail->addAddress($correo);
 
 					$mail->isHTML(true);
-					$mail->Subject = 'Subject';
-					$mail->Body    = 'Hola ' . $correo . ' este es tu link de recuperacion de la contraseña <b>www.google.com/</b> ';
+					$mail->Subject = 'Recover password UNIAJC MAPS';
+					$mail->Body    = 'Hola ' . $correo . ' este es tu link de recuperacion de la contraseña <a href="' . base_url() . 'login/TokenValidation?token=' . $data['token'] . '" > Link de recuperacion </a> Tienes 30minutos antes de que se te expire, tu oportunidad de recuperar contraseña';
 					$mail->AltBody = 'Body in plain text for non-HTML mail clients';
 					$enviar = $mail->send();
 
-					$arrRespuesta = array('status' => 'success', 'msg' => 'El correo se ha enviado correctamente2', 'data' => $enviar);
+					$arrRespuesta = array('status' => 'success', 'msg' => 'El correo se ha enviado correctamente');
 				} catch (Exception $e) {
 					$arrRespuesta = array('status' => 'error', 'msg' => 'El correo no se ha enviado correctamente ' . $mail->ErrorInfo . '');
 				}
@@ -176,6 +181,41 @@ class Login extends Facade
 		} else {
 			$arrRespuesta = array('status' => 'error', 'msg' => 'La peticion HTTP, no corresponde al metodo');
 		}
+		echo json_encode($arrRespuesta, JSON_UNESCAPED_UNICODE);
+	}
+
+	public function TokenValidation()
+	{
+		$data = array();
+		$data['page_tag'] = 'validToken';
+		$data['page_title'] = 'Recuperar Contraseña';
+		$data['page_name'] = 'ValidToken';
+		$data['page_functions_js'] = 'function_login.js';
+
+		$info_token = $this->consultarTokenRecoverPassword($_GET['token']);
+
+		if ($info_token) {
+			$data['info_token'] = $info_token;
+			$this->views->getView($this, "validTokenTrue", $data);
+		} else {
+			$this->views->getView($this, "validTokenFalse", $data);
+		}
+	}
+
+	public function saveRecoverPassword()
+	{
+		$password = crypt($_POST['password'], '123');
+		$usu_id = $_POST['usu_id'];
+
+		$info_save_password = $this->updatePassword($usu_id, $password);
+
+		if ($info_save_password) {
+			$arrRespuesta = array('status' => 'success', 'msg' => 'Se ha actualizado correctamente la contraseña');
+			$_SESSION["LoginTime"] = true;
+		} else {
+			$arrRespuesta = array('status' => 'error', 'msg' => 'La contraseña no se actualizó correctamente');
+		}
+
 		echo json_encode($arrRespuesta, JSON_UNESCAPED_UNICODE);
 	}
 }

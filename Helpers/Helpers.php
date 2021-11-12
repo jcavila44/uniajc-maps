@@ -171,3 +171,27 @@ function generar_contrasena($longitud = 10)
     }
     return $contrasena;
 }
+
+function generate_Token($email)
+{
+    $expFormat = mktime(
+        date("H"),
+        date("i") + 30,
+        date("s"),
+        date("m"),
+        date("d"),
+        date("Y")
+    );
+    $date = date("Y-m-d H:i:s");
+    $expDate = date("Y-m-d H:i:s", $expFormat);
+    $KeyOperation = 1958 * 2;
+    $key = md5($KeyOperation . "&AJC&" . $email);
+    $addKey = substr(md5(uniqid(rand(), 1)), 3, 10);
+    $key = $key . $addKey;
+    $data = [
+        'token' => $key,
+        'dateNow' => $date,
+        'expDate' => $expDate,
+    ];
+    return $data;
+}

@@ -51,7 +51,6 @@ const onClickForgotPassword = () => {
       dataType: "json",
       beforeSend: () => { overlay(true) },
       success: (objData) => {
-        console.log("Hola", objData);
         if (objData.status === "success") {
           location.reload();
 
@@ -60,7 +59,6 @@ const onClickForgotPassword = () => {
         }
       },
       error: (error) => {
-        console.log("Error", error);
         message("Ocurrió un error en el sistema, por favor revisar los datos enviados" + error, "error");
       }
     });
@@ -69,3 +67,54 @@ const onClickForgotPassword = () => {
   }
 
 }
+
+const onClickViewPassword = (idElement, idIcon) => {
+  const tipo = document.getElementById(idElement);
+  const Icon = document.getElementById(idIcon);
+
+  if (tipo.type == "password") {
+    Icon.setAttribute('class', 'icon-magnifier-remove');
+    tipo.type = "text";
+
+  } else {
+    Icon.setAttribute('class', 'icon-magnifier-add');
+    tipo.type = "password";
+  }
+
+}
+
+const saveRecoverPassword = () => {
+  const password = document.getElementById("password").value;
+  const passwordConfirmation = document.getElementById("passwordConfirmation").value;
+
+  if (password == passwordConfirmation) {
+    const usu_id = document.getElementById("usu_id").value;
+    $.ajax({
+      async: true,
+      url: base_url + 'Login/saveRecoverPassword',
+      type: "POST",
+      data: {
+        password,
+        usu_id
+      },
+      dataType: "json",
+      beforeSend: () => { overlay(true) },
+      success: (objData) => {
+        message("La contraseña se actualizó correctamente", "success");
+        setTimeout(function () {
+          location.reload();
+        }, 3000);
+      },
+      error: (error) => {
+        message("Ocurrió un error en el sistema, por favor revisar los datos enviados", error);
+      }
+    });
+  } else {
+    document.getElementById("alert-diferrent-password").style.display = "block";
+  }
+
+
+}
+
+
+

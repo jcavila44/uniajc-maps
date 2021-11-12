@@ -4,12 +4,14 @@ require_once('Models/HomeModel.php');
 require_once('Models/LoginModel.php');
 require_once('Models/StartModel.php');
 require_once('Models/GestorUsuariosModel.php');
+require_once('Models/GestorTokenModel.php');
 
 class Facade
 {
 
   protected $HomeModel;
   protected $GestorUsuariosModel;
+  protected $GestorTokenModel;
   protected $StartModel;
   protected $LoginModel;
 
@@ -17,6 +19,7 @@ class Facade
   {
     $this->HomeModel = new HomeModel();
     $this->GestorUsuariosModel = new GestorUsuariosModel();
+    $this->GestorTokenModel = new GestorTokenModel();
     $this->StartModel = new StartModel();
     $this->LoginModel = new LoginModel();
     $this->views = new Views();
@@ -47,6 +50,11 @@ class Facade
     return $this->GestorUsuariosModel->updateUsuarioModel($nombreUsuario, $cedulaUsuario, $CorreoUsuario, $rolUsuario, $usu_id);
   }
 
+  public function updatePassword($usu_id, $password)
+  {
+    return $this->GestorUsuariosModel->updatePassword($usu_id, $password);
+  }
+
   public function consultarUsuarioLogin($CorreoUsuario)
   {
     return $this->LoginModel->consultarUsuarioLoginModel($CorreoUsuario);
@@ -54,5 +62,15 @@ class Facade
   public function consultarUsuarioRecoverPassword($CorreoUsuario)
   {
     return $this->LoginModel->consultarUsuarioRecoverPasswordModel($CorreoUsuario);
+  }
+
+  public function saveTokenModel($token_fecha, $token_vencido, $token, $usu_id)
+  {
+    return $this->GestorTokenModel->saveTokenModel($token_fecha, $token_vencido, $token, $usu_id);
+  }
+
+  public function consultarTokenRecoverPassword($Token)
+  {
+    return $this->GestorTokenModel->consultarTokenRecoverPassword($Token);
   }
 }
