@@ -29,7 +29,7 @@
                         Mapa # <?php echo $i; ?>
                       </h4>
                     </div>
-                    <?php if($_SESSION['rol_id'] == "1"): ?>
+                    <?php if($_SESSION['rol_id'] == "1" || $_SESSION['rol_id'] == "2" ): ?>
                     <div class="col-6 col-md-6 mb-2">
                       <button type="button" class="btn btn-outline-success btn-block">
                         <i class="icon-pencil icons font-2xl d-block"></i>

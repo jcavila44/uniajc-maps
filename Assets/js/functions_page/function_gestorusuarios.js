@@ -32,8 +32,8 @@ const getAllUsers = () => {
                 <th>Nombres y apellido</th>
                 <th>Cédula</th>
                 <th>Correo</th>
-                <th>Estado</th>
                 <th>Rol</th>
+                <th>Estado</th>
                 <th>Eliminar</th>
                 <th>Actualizar</th>
               </tr>
