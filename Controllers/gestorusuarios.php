@@ -107,6 +107,27 @@ class GestorUsuarios extends Facade
 		die();
 	}
 
+	//Metodo para obtener todos los usuarios
+	public function enableUserController()
+	{
+		if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
+			$idUsuario = limpiar_cadena($_POST['idUsuario']);
+
+			$peticion = $this->enableUsuario($idUsuario);
+
+			if ($peticion > 0) {
+				$arrRespuesta = array('status' => 'success', 'msg' => 'Usuario agregado satisfactoriamente');
+			} else {
+				$arrRespuesta = array('status' => 'error', 'msg' => 'No se ha podido registrar');
+			}
+		} else {
+			$arrRespuesta = array('status' => 'error', 'msg' => 'La peticion HTTP, no corresponde al método');
+		}
+		echo json_encode($arrRespuesta, JSON_UNESCAPED_UNICODE);
+		die();
+	}
+
 
 	//Metodo para obtener todos los usuarios
 	public function actualizarInfoUserController()

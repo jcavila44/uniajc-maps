@@ -32,10 +32,9 @@ const getAllUsers = () => {
                 <th>Nombres y apellido</th>
                 <th>Cédula</th>
                 <th>Correo</th>
-                <th>Estado</th>
                 <th>Rol</th>
-                <th>Eliminar</th>
-                <th>Actualizar</th>
+                <th>Estado</th>
+                <th>Acciones</th>
               </tr>
             </thead>
             <tbody>
@@ -44,6 +43,13 @@ const getAllUsers = () => {
         objData.data.forEach((element, key) => {
 
           let jsonInfo = JSON.stringify(element);
+          let estadoUsuario = (element.estado_descripcion === 'usuario inactivo') ? 0 : 1; // 1 activo, 0 inactivo
+          const btnActualizarOEliminar = (estadoUsuario === 1) ?
+            `<button onclick='onClickEliminarUsuario(${jsonInfo})' class="dropdown-item" type="button">Inhabilitar <i class="fa fa-lock fa-lg ml-2 text-dark"></i> </button>`
+            :
+            `<button onclick='onClickHabilitarUsuario(${jsonInfo})' class="dropdown-item" type="button">Habilitar <i class="fa fa-unlock fa-lg ml-2 text-dark"></i> </button>`
+            ;
+
 
           htmlTable += `
             <tr>
@@ -52,9 +58,16 @@ const getAllUsers = () => {
               <td> ${element.usu_cedula} </td>
               <td> ${element.usu_correo.toLowerCase()} </td>
               <td> ${firstLetterUppercase(element.rol_descripcion)} </td>
-              <td> ${firstLetterUppercase(element.estado_descripcion)} </td>
-              <td> <button onclick='onClickEliminarUsuario(${jsonInfo})' class="btn btn-primary">Eliminar</button> </td>
-              <td> <button onclick='onClickActualizarUsuario(${jsonInfo})' class="btn btn-primary">Actualizar</button> </td>
+              <td class="text-center"> <span class="badge pr-4 pl-4 pt-2 pb-2 badge-${(estadoUsuario == 1) ? 'success' : 'secondary'}">${(estadoUsuario == 1) ? 'Activo' : 'Inactivo'}</span> </td>
+              <td> 
+                <div class="dropdown">
+                  <button class="btn btn-outline-primary dropdown-toggle w-100" id="dropdownMenu2" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Gestionar</button>
+                  <div class="dropdown-menu w-100" aria-labelledby="dropdownMenu2" x-placement="bottom-start" style="position: absolute; transform: translate3d(0px, 34px, 0px); top: 0px; left: 0px; will-change: transform;">
+                    <button onclick='onClickActualizarUsuario(${jsonInfo})' class="dropdown-item" type="button">Actualizar <i class="icon-settings fa-lg ml-2 text-dark"></i> </button>
+                    ${btnActualizarOEliminar}
+                  </div>
+                </div>
+              </td>
             </tr>
           `;
         });
@@ -202,18 +215,36 @@ const guardarInformacionUsuario = ({ nombreUsuario, cedulaUsuario, CorreoUsuario
 
 const onClickEliminarUsuario = ({ usu_id, usu_nombre }) => {
 
-
   Swal.fire({
     title: 'Inhabilitar usuario',
-    html: `<h4>¿Está seguro de eliminar al usuario ${wordToCamelCase(usu_nombre)}? </h4>`,
+    html: `<h4>¿Está seguro de inhabilitar al usuario ${wordToCamelCase(usu_nombre)}? </h4>`,
     showCancelButton: true,
-    confirmButtonText: 'Eliminar',
+    confirmButtonText: 'Inhabilitar',
     confirmButtonColor: '#4dbd74',
     cancelButtonText: 'Cancelar',
     cancelButtonColor: '#6c757d',
     width: '700px'
   }).then((result) => {
-    if (result.value) { inhabilitarUsuario(usu_id) }
+    let usu_id2 = usu_id;
+    if (result.value) { inhabilitarUsuario(usu_id2) }
+  });
+
+}
+
+const onClickHabilitarUsuario = ({ usu_id, usu_nombre }) => {
+
+  Swal.fire({
+    title: 'Habilitar usuario',
+    html: `<h4>¿Está seguro de habilitar el usuario ${wordToCamelCase(usu_nombre)}? </h4>`,
+    showCancelButton: true,
+    confirmButtonText: 'Habilitar',
+    confirmButtonColor: '#4dbd74',
+    cancelButtonText: 'Cancelar',
+    cancelButtonColor: '#6c757d',
+    width: '700px'
+  }).then((result) => {
+    let usu_id2 = usu_id;
+    if (result.value) { habilitarUsuario(usu_id2) }
   });
 
 }
@@ -242,6 +273,34 @@ const inhabilitarUsuario = (idUsuario) => {
     },
     error: (error) => {
       message("Ocurrió un error en la eliminacion, por favor revisar los datos enviados", "error");
+    }
+  });
+
+}
+
+const habilitarUsuario = (idUsuario) => {
+
+  $.ajax({
+    async: true,
+    url: base_url + 'gestorusuarios/enableUserController',
+    type: "POST",
+    data: {
+      idUsuario: parseInt(idUsuario),
+    },
+    dataType: "json",
+    beforeSend: () => { overlay(true) },
+    success: (objData) => {
+      if (objData.status === "success") {
+        message("Usuario habilitado correctamente", "success");
+        getAllUsers();
+
+      } else {
+        message("Ocurrió un error inesperado, por favor vuelva a intentar", "warning");
+      }
+
+    },
+    error: (error) => {
+      message("Ocurrió un error en la habilitación, por favor revisar los datos enviados", "error");
     }
   });
 

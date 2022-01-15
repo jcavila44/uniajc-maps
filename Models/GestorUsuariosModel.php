@@ -1,11 +1,11 @@
 <?php
 //============================================================+
 // Carpeta: Models
-// Nombre del archivo   : LoginModel.php
+// Nombre del archivo   : GestorUsuariosModel.php
 // Inicio       : 2021-09-11
 // Ultima actualizacion :
 //
-// Description : Modelo para manejar los datos y querys del modulo de Login
+// Description : Modelo para manejar los datos y querys del modulo de usuarios
 //
 // Author: Jose Carlos Avila Perea
 //
@@ -105,6 +105,26 @@ class GestorUsuariosModel extends MySQL
   {
 
     $this->intEstadoId = 8;
+    $this->intUsuId = $idUsuario;
+
+    $query = "UPDATE 
+                  usuario 
+                 SET 
+                  est_id = ?
+                 WHERE 
+                  usuario.usu_id = ?
+                ";
+
+    $arrInformacion = array($this->intEstadoId, $this->intUsuId);
+    $peticion = $this->Update($query, $arrInformacion);
+
+    return $peticion;
+  }
+
+  public function enableUsuarioModel(int $idUsuario)
+  {
+
+    $this->intEstadoId = 7;
     $this->intUsuId = $idUsuario;
 
     $query = "UPDATE 
