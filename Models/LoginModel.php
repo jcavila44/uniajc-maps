@@ -34,6 +34,7 @@ class LoginModel extends MySQL
 										usuario.usu_password,
 										usuario.usu_nombre,
 										usuario.usu_cedula,
+										usuario.rol_id,
 										estado.estado_descripcion,
 										rol.rol_descripcion,
 										estado.estado_id

@@ -29,16 +29,22 @@
                         Mapa # <?php echo $i; ?>
                       </h4>
                     </div>
+                    <?php if($_SESSION['rol_id'] == "1"): ?>
                     <div class="col-6 col-md-6 mb-2">
                       <button type="button" class="btn btn-outline-success btn-block">
                         <i class="icon-pencil icons font-2xl d-block"></i>
                       </button>
                     </div>
+                    <?php endif ?>
+
+                    <?php if($_SESSION['rol_id'] == "1"): ?>
                     <div class="col-6 col-md-6 mb-2">
                       <button onclick="eliminarMapa(<?php echo $i; ?>);" type="button" class="btn btn-outline-danger btn-block">
                         <i class="icon-trash icons font-2xl d-block"></i>
                       </button>
                     </div>
+                    <?php endif ?>
+                    
                     <div class="col-6 col-md-6 mb-2">
                       <button type="button" class="btn btn-outline-success btn-block">
                         <i class="icon-layers icons font-2xl d-block"></i>

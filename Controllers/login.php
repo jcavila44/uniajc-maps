@@ -115,11 +115,12 @@ class Login extends Facade
 					if ($ObtenerUsuario['estado_id'] == 7) {
 
 						$_SESSION['login'] = true;
-						$_SESSION['idusuario'] = $ObtenerUsuario['usu_id'];
+ 						$_SESSION['idusuario'] = $ObtenerUsuario['usu_id'];
 						$_SESSION['correo'] = $ObtenerUsuario['usu_correo'];
 						$_SESSION['nombre'] = $ObtenerUsuario['usu_nombre'];
 						$_SESSION['cedula'] = $ObtenerUsuario['usu_cedula'];
 						$_SESSION['rol'] = $ObtenerUsuario['rol_descripcion'];
+						$_SESSION['rol_id'] = $ObtenerUsuario['rol_id'];
 						$arrRespuesta = array('status' => 'success', 'msg' => 'Inicio de sesión exitoso');
 					} else {
 						$arrRespuesta = array('status' => 'success', 'msg' => 'Usuario inhabilitado');
