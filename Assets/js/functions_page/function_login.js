@@ -21,8 +21,8 @@ const onClickIngresar = () => {
       success: (objData) => {
         if (objData.status === "success") {
           location.reload();
-        } else if (objData.status === "error") {
-          message("Ocurrió un error inesperado, por favor vuelva a intentar", "error");
+        } else {
+          message(objData.msg, objData.status);
         }
       },
       error: (error) => {

@@ -4,6 +4,7 @@ require_once('Models/HomeModel.php');
 require_once('Models/LoginModel.php');
 require_once('Models/StartModel.php');
 require_once('Models/GestorUsuariosModel.php');
+require_once('Models/GestorMapasModel.php');
 require_once('Models/GestorTokenModel.php');
 
 class Facade
@@ -11,6 +12,7 @@ class Facade
 
   protected $HomeModel;
   protected $GestorUsuariosModel;
+  protected $GestorMapasModel;
   protected $GestorTokenModel;
   protected $StartModel;
   protected $LoginModel;
@@ -19,6 +21,7 @@ class Facade
   {
     $this->HomeModel = new HomeModel();
     $this->GestorUsuariosModel = new GestorUsuariosModel();
+    $this->GestorMapasModel = new GestorMapasModel();
     $this->GestorTokenModel = new GestorTokenModel();
     $this->StartModel = new StartModel();
     $this->LoginModel = new LoginModel();
@@ -45,6 +48,11 @@ class Facade
     return $this->GestorUsuariosModel->deleteUsuarioModel($idUsuario);
   }
 
+  public function enableUsuario($idUsuario)
+  {
+    return $this->GestorUsuariosModel->enableUsuarioModel($idUsuario);
+  }
+
   public function updateUsuario($nombreUsuario, $cedulaUsuario, $CorreoUsuario, $rolUsuario, $usu_id)
   {
     return $this->GestorUsuariosModel->updateUsuarioModel($nombreUsuario, $cedulaUsuario, $CorreoUsuario, $rolUsuario, $usu_id);
@@ -59,6 +67,7 @@ class Facade
   {
     return $this->LoginModel->consultarUsuarioLoginModel($CorreoUsuario);
   }
+
   public function consultarUsuarioRecoverPassword($CorreoUsuario)
   {
     return $this->LoginModel->consultarUsuarioRecoverPasswordModel($CorreoUsuario);
@@ -72,5 +81,30 @@ class Facade
   public function consultarTokenRecoverPassword($Token)
   {
     return $this->GestorTokenModel->consultarTokenRecoverPassword($Token);
+  }
+
+  public function guardarCapas(string $jsonData)
+  {
+    return $this->GestorMapasModel->guardarCapas($jsonData);
+  }
+
+  public function guardarMapa(string $nombreMapa, string $descripcionMapa, string $ruta)
+  {
+    return $this->GestorMapasModel->guardarMapa($nombreMapa, $descripcionMapa, $ruta);
+  }
+
+  public function guardarMapaCapa(int $idMapa, int $idCapa)
+  {
+    return $this->GestorMapasModel->guardarMapaCapa($idMapa, $idCapa);
+  }
+
+  public function obtenerMapas()
+  {
+    return $this->GestorMapasModel->obtenerMapasModel();
+  }
+
+  public function getDataMapa(int $idMapa)
+  {
+    return $this->GestorMapasModel->obtenerCapasModel($idMapa);
   }
 }
