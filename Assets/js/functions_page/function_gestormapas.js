@@ -2,7 +2,9 @@ $(document).ready(function () {
   getAllMaps();
   tableGestorMapas = startTable("tableGestorMapas");
 
+
 });
+
 
 const getAllMaps = () => {
 
@@ -136,39 +138,96 @@ const generarCardsMapas = (objData) => {
 
 
 const AddMapas = () => {
+  $.ajax({
+    url: base_url + 'gestorusuarios/obtenerUsuariosController',
+    type: "GET",
+    data: {},
+    dataType: "json",
+    beforeSend: () => { overlay(true) },
+    success: (objData) => {
+      let htmlModal = `
+                <div class="col-mb-12 m-2 p-2" style="font-size: 14px; text-align: left; overflow: hidden;">
+                  <form id="formAgregarMapa">
+                    <div class="row">
+                      <div class="col-md-12 mb-2">
+                        <label for="name">Nombre del mapa</label>
+                        <input class="form-control" id="nombreMapa" name="nombreMapa" type="text" placeholder="Nombre del mapa">
+                      </div>
+                      <div class="col-md-12 mb-2">
+                        <label for="name">Subir mapa</label>
+                        <input class="form-control" id="mapaZip" name="mapaZip" type="file" accept=".zip">
+                       </div>
+                      <div class="col-md-12 mb-2">
+                        <label for="name">Descripción del mapa</label>
+                        <textarea style="resize: none;" class="form-control" id="descripcionMapa" name="descripcionMapa" rows="2" placeholder="Descripción del mapa"></textarea>
+                      </div>
+                      <div class="col-md-12 mb-2">
+                        <label>Permisos de usuario</label>
+                        <div class="col-md-12">
+                        <div class="input-group">
+                        
+                        <select class="custom-select" id="UserList" aria-label="Example select with button addon">
+                        <option selected>Choose...</option>`;
 
-  const htmlModal = `
-            <div class="col-mb-12 m-2 p-2" style="font-size: 14px; text-align: left; overflow: hidden;">
-              <form id="formAgregarMapa">
-                <div class="row">
-                  <div class="col-md-12 mb-2">
-                    <label for="name">Nombre del mapa</label>
-                    <input class="form-control" id="nombreMapa" name="nombreMapa" type="text" placeholder="Nombre del mapa">
-                  </div>
-                  <div class="col-md-12 mb-2">
-                    <label for="name">Subir mapa</label>
-                    <input class="form-control" id="mapaZip" name="mapaZip" type="file" accept=".zip">
-                  </div>
-                  <div class="col-md-12 mb-2">
-                    <label for="name">Descripción del mapa</label>
-                    <textarea style="resize: none;" class="form-control" id="descripcionMapa" name="descripcionMapa" rows="2" placeholder="Descripción del mapa"></textarea>
-                  </div>
-                  <div class="col-md-12 mb-2">
-                    <br>
-                    <button onclick="onSubmitFormularioAgregarMapa()" type="button" class="btn btn-success">Guardar</button>
-                  </div>
+      objData.data.forEach((User) => {
+
+        htmlModal += `<option value="${User.usu_id}" dataName="${User.usu_nombre}">${User.usu_nombre}</option>`
+      });
+
+      htmlModal += `</select>
+                        <div class="input-group-append">
+                          <button class="btn btn-secondary"  id="addUser" type="button">Agregar Usuario</button>
+                        </div>
+
+                        </div>
+                        </select>
+                        </div>
+                        
+                      </div>
+                        <div class="col-md-12">
+                        <label>Usuarios agregados</label>
+                        <ul id='UserAdded'>
+                        </ul>
+                        </div>
+                      <div class="col-md-12 mb-2">
+                        <br>
+                        <button onclick="onSubmitFormularioAgregarMapa()" type="button" class="btn btn-success">Guardar</button>
+                      </div>
+                    </div>
+                  </form>
                 </div>
-              </form>
-            </div>
-    `;
+        `;
 
-  Swal.fire({
-    title: 'Agregar Mapa',
-    html: htmlModal,
-    showCancelButton: false,
-    showConfirmButton: false,
-    showCloseButton: true,
+      Swal.fire({
+        title: 'Agregar Mapa',
+        html: htmlModal,
+        showCancelButton: false,
+        showConfirmButton: false,
+        showCloseButton: true,
+      });
+
+      var UserInput = document.getElementById('UserList');
+      var addTaskButton = document.getElementById('addUser');
+      var ListUserAdded = document.getElementById('UserAdded');
+      
+      const addTask = function () {
+        let id = UserInput.value;
+        let text = UserInput.options[UserInput.selectedIndex].getAttribute("dataName");
+        UserInput.options[UserInput.selectedIndex].remove();
+        if(text){
+          var li = document.createElement('li');
+          li.innerHTML = "<label>" + text + "</label>";
+            ListUserAdded.appendChild(li);
+        }
+        
+      }
+
+      if (addTaskButton && UserInput) {
+        addTaskButton.onclick = addTask;
+      }
+    }
   });
+
 }
 
 
@@ -376,6 +435,8 @@ const onMapClick = (element) => {
 }
 
 const onSubmitFormularioAgregarMapa = () => {
+
+
 
   try {
 
