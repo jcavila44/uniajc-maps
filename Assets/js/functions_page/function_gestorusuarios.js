@@ -45,9 +45,9 @@ const getAllUsers = () => {
           let jsonInfo = JSON.stringify(element);
           let estadoUsuario = (element.estado_descripcion === 'usuario inactivo') ? 0 : 1; // 1 activo, 0 inactivo
           const btnActualizarOEliminar = (estadoUsuario === 1) ?
-            `<button onclick='onClickEliminarUsuario(${jsonInfo})' class="dropdown-item" type="button">Inhabilitar <i class="fa fa-lock fa-lg ml-2 text-dark"></i> </button>`
+            `<button onclick='onClickEliminarUsuario(${jsonInfo})' class="dropdown-item" type="button">Desactivar <i class="fa fa-lock fa-lg ml-2 text-dark"></i> </button>`
             :
-            `<button onclick='onClickHabilitarUsuario(${jsonInfo})' class="dropdown-item" type="button">Habilitar <i class="fa fa-unlock fa-lg ml-2 text-dark"></i> </button>`
+            `<button onclick='onClickHabilitarUsuario(${jsonInfo})' class="dropdown-item" type="button">Activar <i class="fa fa-unlock fa-lg ml-2 text-dark"></i> </button>`
             ;
 
 
