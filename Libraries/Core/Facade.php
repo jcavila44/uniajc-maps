@@ -107,4 +107,14 @@ class Facade
   {
     return $this->GestorMapasModel->obtenerCapasModel($idMapa);
   }
+
+  public function eliminarMapa(int $idMapa)
+  {
+    return $this->GestorMapasModel->eliminarMapa($idMapa);
+  }
+
+  public function habilitarMapa(int $idMapa)
+  {
+    return $this->GestorMapasModel->habilitarMapa($idMapa);
+  }
 }

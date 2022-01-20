@@ -40,10 +40,10 @@ class GestorMapasModel extends MySQL
     $this->strCapaTipo = 'JSON';
 
     $query = "INSERT INTO 
-                `capa`(
-                    `capa_propiedades`,
-                    `capa_geometria`,
-                    `capa_tipo`
+                capa(
+                    capa_propiedades,
+                    capa_geometria,
+                    capa_tipo
                 )
                 VALUES(?, ?, ?);
     ";
@@ -68,11 +68,11 @@ class GestorMapasModel extends MySQL
     $this->intEstId = 9; // mapa activo
 
     $query = "INSERT INTO 
-                `mapa`(
-                    `mapa_nombre`,
-                    `mapa_descripcion`,
-                    `mapa_ruta`,
-                    `est_id`
+                mapa(
+                    mapa_nombre,
+                    mapa_descripcion,
+                    mapa_ruta,
+                    est_id
                 )
               VALUES (?, ?, ?, ?);
     ";
@@ -97,9 +97,9 @@ class GestorMapasModel extends MySQL
     $this->intEstId = 9; // mapa activo
 
     $query = "INSERT INTO 
-                `menu_capa_mapa`(
-                    `menu_capa_id`,
-                    `menu_mapa_id`
+                menu_capa_mapa(
+                    menu_capa_id,
+                    menu_mapa_id
                 )
               VALUES (?, ?);
     ";
@@ -122,7 +122,7 @@ class GestorMapasModel extends MySQL
                   mapa
               WHERE
                   mapa.est_id = 9 or mapa.est_id = 10
-              GROUP BY mapa.mapa_id DESC
+              ORDER BY mapa.est_id ASC
               ;
     ";
     $peticion = $this->SelectAll($query);
@@ -144,6 +144,44 @@ class GestorMapasModel extends MySQL
                   menu_capa_mapa.menu_mapa_id = mapa.mapa_id
     ";
     $peticion = $this->SelectAll($query);
+    return $peticion;
+  }
+
+  public function eliminarMapa(int $idMapa)
+  {
+
+    $this->intEstadoId = 10;
+    $this->intMapaId = $idMapa;
+
+    $query = "UPDATE
+                  mapa
+              SET
+                  est_id = ?
+              WHERE
+                  mapa_id = ?
+    ";
+
+    $arrInformacion = array($this->intEstadoId, $this->intMapaId);
+    $peticion = $this->Update($query, $arrInformacion);
+    return $peticion;
+  }
+
+  public function habilitarMapa(int $idMapa)
+  {
+
+    $this->intEstadoId = 9;
+    $this->intMapaId = $idMapa;
+
+    $query = "UPDATE
+                  mapa
+              SET
+                  est_id = ?
+              WHERE
+                  mapa_id = ?
+    ";
+
+    $arrInformacion = array($this->intEstadoId, $this->intMapaId);
+    $peticion = $this->Update($query, $arrInformacion);
     return $peticion;
   }
 }

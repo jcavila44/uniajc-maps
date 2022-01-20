@@ -267,4 +267,55 @@ class GestorMapas extends Facade
 		echo json_encode($arrRespuesta, JSON_UNESCAPED_UNICODE);
 		die();
 	}
+
+
+	public function eliminarMapaController()
+	{
+
+		if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
+			$mapaId = limpiar_cadena($_POST['mapa']);
+
+			if (!empty($mapaId) && $mapaId !== null) {
+				$peticion = $this->eliminarMapa($mapaId);
+
+				if ($peticion > 0) {
+					$arrRespuesta = array('status' => 'success', 'msg' => 'Mapa eliminado correctamente');
+				} else {
+					$arrRespuesta = array('status' => 'error', 'msg' => 'Ocurrió un error en la eliminación, por favor validar de nuevo');
+				}
+			} else {
+				$arrRespuesta = array('status' => 'error', 'msg' => 'Debes de enviar el mapa que deseas eliminar');
+			}
+		} else {
+			$arrRespuesta = array('status' => 'error', 'msg' => 'La peticion HTTP, no corresponde al método');
+		}
+		echo json_encode($arrRespuesta, JSON_UNESCAPED_UNICODE);
+		die();
+	}
+
+	public function habilitarMapaController()
+	{
+
+		if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
+			$mapaId = limpiar_cadena($_POST['mapa']);
+
+			if (!empty($mapaId) && $mapaId !== null) {
+				$peticion = $this->habilitarMapa($mapaId);
+
+				if ($peticion > 0) {
+					$arrRespuesta = array('status' => 'success', 'msg' => 'Mapa eliminado correctamente');
+				} else {
+					$arrRespuesta = array('status' => 'error', 'msg' => 'Ocurrió un error en la eliminación, por favor validar de nuevo');
+				}
+			} else {
+				$arrRespuesta = array('status' => 'error', 'msg' => 'Debes de enviar el mapa que deseas eliminar');
+			}
+		} else {
+			$arrRespuesta = array('status' => 'error', 'msg' => 'La peticion HTTP, no corresponde al método');
+		}
+		echo json_encode($arrRespuesta, JSON_UNESCAPED_UNICODE);
+		die();
+	}
 }
