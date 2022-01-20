@@ -156,17 +156,17 @@ const AddMapas = () => {
       var UserInput = document.getElementById('UserList');
       var addTaskButton = document.getElementById('addUser');
       var ListUserAdded = document.getElementById('UserAdded');
-      
+
       const addTask = function () {
-        let id = UserInput.value;
+        let id = UserInput.options[UserInput.selectedIndex].value;
         let text = UserInput.options[UserInput.selectedIndex].getAttribute("dataName");
         UserInput.options[UserInput.selectedIndex].remove();
-        if(text){
+        if (text) {
           var li = document.createElement('li');
-          li.innerHTML = "<label>" + text + "</label>";
-            ListUserAdded.appendChild(li);
+          li.innerHTML = "<label dataId=" + id + ">" + text + "</label>";
+          ListUserAdded.appendChild(li);
         }
-        
+
       }
 
       if (addTaskButton && UserInput) {
@@ -319,10 +319,33 @@ const onSubmitFormularioAgregarMapa = () => {
   try {
 
     var formulario = new FormData(document.getElementById('formAgregarMapa'));
+    // $.ajax({
+    //   type: 'POST',
+    //   url: base_url + 'gestormapas/addMapa',
+    //   data: formulario,
+    //   cache: false,
+    //   contentType: false,
+    //   processData: false,
+    //   method: 'POST',
+    //   async: false,
+    //   enctype: 'multi part/form-data',
+    //   dataType: "json",
+    //   beforeSend: () => { overlay(true) },
+    //   success: function ({ status = null, msg = null, idRegistered = null, data = null }) {
+    const UserRelationWithMap = document.getElementById('UserAdded');
+    const li = UserRelationWithMap.getElementsByTagName('li');
+    let idusers = [];
+    for (let liElement of li) {
+      const label = liElement.getElementsByTagName('label');
+      for (let labelElement of label) {
+        let idUser = labelElement.getAttribute('dataid');
+        idusers.push(idUser);
+      }
+    }
     $.ajax({
       type: 'POST',
-      url: base_url + 'gestormapas/addMapa',
-      data: formulario,
+      url: base_url + 'gestormapas/addRelationMapaUser',
+      data: idusers,
       cache: false,
       contentType: false,
       processData: false,
@@ -331,9 +354,8 @@ const onSubmitFormularioAgregarMapa = () => {
       enctype: 'multi part/form-data',
       dataType: "json",
       beforeSend: () => { overlay(true) },
-      success: function ({ status = null, msg = null, data = null }) {
+      success: function ({ status = null, msg = null, idRegistered = null, data = null }) {
         message(msg, status);
-
         Swal.fire({
           icon: status,
           html: `<h3>${msg}</h3>`,
@@ -346,12 +368,16 @@ const onSubmitFormularioAgregarMapa = () => {
             setTimeout(() => { getAllMaps() }, 300);
           }
         });
-
       },
       error: () => {
         message("Ocurrió un error, por favor revisar los datos enviados", "error");
       }
     });
+    //   },
+    //   error: () => {
+    //     message("Ocurrió un error, por favor revisar los datos enviados", "error");
+    //   }
+    // });
 
   } catch (e) {
     throw new Error(e.message);

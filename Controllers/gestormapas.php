@@ -87,7 +87,7 @@ class GestorMapas extends Facade
 								$mapaSave = $this->guardarMapaController($nombreMapa, $descripcionMapa, $nombreFolder . 'index.html');
 
 								if ($mapaSave != false) {
-									$arrRespuesta = array('status' => 'success', 'msg' => 'Se guardó el mapa correctemente');
+									$arrRespuesta = array('status' => 'success', 'msg' => 'Se guardó el mapa correctemente', 'idRegistered' => $mapaSave);
 								} else {
 									$arrRespuesta = array('status' => 'error', 'msg' => 'Ocurrió un error en la inserción, por favor validar de nuevo');
 								}
@@ -108,6 +108,18 @@ class GestorMapas extends Facade
 
 		echo json_encode($arrRespuesta, JSON_UNESCAPED_UNICODE);
 		die();
+	}
+
+	public function addRelationMapaUser()
+	{
+		if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
+			$peticion = $this->guardarMapaUsuario($_POST['mapaId'], $_POST['usuId']);
+			return ($peticion != false) ? $peticion : false;
+		} else {
+			$arrRespuesta = array('status' => 'error', 'msg' => 'La peticion HTTP, no corresponde al método.');
+			echo json_encode($arrRespuesta, JSON_UNESCAPED_UNICODE);
+		}
 	}
 
 	public function addMapa2()

@@ -5,6 +5,7 @@ require_once('Models/LoginModel.php');
 require_once('Models/StartModel.php');
 require_once('Models/GestorUsuariosModel.php');
 require_once('Models/GestorMapasModel.php');
+require_once('Models/GestorMapasUsuarioModel.php');
 require_once('Models/GestorTokenModel.php');
 
 class Facade
@@ -22,6 +23,7 @@ class Facade
     $this->HomeModel = new HomeModel();
     $this->GestorUsuariosModel = new GestorUsuariosModel();
     $this->GestorMapasModel = new GestorMapasModel();
+    $this->GestorMapasUsuarioModel = new GestorMapasUsuarioModel();
     $this->GestorTokenModel = new GestorTokenModel();
     $this->StartModel = new StartModel();
     $this->LoginModel = new LoginModel();
@@ -91,6 +93,11 @@ class Facade
   public function guardarMapa(string $nombreMapa, string $descripcionMapa, string $ruta)
   {
     return $this->GestorMapasModel->guardarMapa($nombreMapa, $descripcionMapa, $ruta);
+  }
+
+  public function guardarMapaUsuario(int $mapaId, Array $usuId )
+  {
+    return $this->GestorMapasUsuarioModel->addRelationMapaUser($mapaId, $usuId);
   }
 
   public function guardarMapaCapa(int $idMapa, int $idCapa)
