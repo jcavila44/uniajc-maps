@@ -79,21 +79,32 @@ class GestorMapas extends Facade
 					if ($tipo == "application/x-zip-compressed") {
 
 						if ($zip->open($ruta) === TRUE) {
-							$archivoExtraido = $zip->extractTo($nombreFolder);
-							$zip->close();
 
-							if ($archivoExtraido) {
+							$validarEstructuraZip = false;
 
-								$mapaSave = $this->guardarMapaController($nombreMapa, $descripcionMapa, $nombreFolder . 'index.html');
+							for ($i = 0; $i < $zip->numFiles; $i++) {
+								($zip->getNameIndex($i) === "index.html") && ($validarEstructuraZip = true);
+							}
 
-								if ($mapaSave != false) {
-									$arrRespuesta = array('status' => 'success', 'msg' => 'Se guardó el mapa correctemente');
-								} else {
-									$arrRespuesta = array('status' => 'error', 'msg' => 'Ocurrió un error en la inserción, por favor validar de nuevo');
+							if ($validarEstructuraZip) {
+								$archivoExtraido = $zip->extractTo($nombreFolder);
+								$zip->close();
+	
+								if ($archivoExtraido) {
+	
+									$mapaSave = $this->guardarMapaController($nombreMapa, $descripcionMapa, $nombreFolder . 'index.html');
+	
+									if ($mapaSave != false) {
+										$arrRespuesta = array('status' => 'success', 'msg' => 'Se guardó el mapa correctemente');
+									} else {
+										$arrRespuesta = array('status' => 'error', 'msg' => 'Ocurrió un error en la inserción, por favor validar de nuevo');
+									}
 								}
+							} else {
+								$arrRespuesta = array('status' => 'warning', 'msg' => 'El archivo .zip no contiene la estructura correspondiente. <br> Recuerda que las carpetas del mapa deben de estar en la raiz del archivo.');
 							}
 						} else {
-							$arrRespuesta = array('status' => 'warning', 'msg' => 'No se logró descomprimir el archivo ZIP');
+							$arrRespuesta = array('status' => 'warning', 'msg' => 'No se logró descomprimir el archivo .zip');
 						}
 					} else {
 						$arrRespuesta = array('status' => 'warning', 'msg' => 'Solo se permiten archivos con extension .zip');
@@ -317,5 +328,112 @@ class GestorMapas extends Facade
 		}
 		echo json_encode($arrRespuesta, JSON_UNESCAPED_UNICODE);
 		die();
+	}
+
+
+
+	public function editarMapa()
+	{
+
+		if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
+			$zip = new ZipArchive;
+			$mapaRuta = limpiar_cadena($_POST['mapaRuta']);
+			$mapaId = limpiar_cadena($_POST['mapa']);
+			$nombreMapa = limpiar_cadena($_POST['nombreMapa']);
+			$descripcionMapa = limpiar_cadena($_POST['descripcionMapa']);
+
+			if (!empty($_FILES['mapaZip']) && $_FILES['mapaZip'] !== null && $_FILES['mapaZip']['type']) {
+
+				if ($_FILES['mapaZip']['error'] !== 0) {
+					$arrRespuesta = array('status' => 'error', 'msg' => $this->ErrorFile($_FILES['mapaZip']['error']));
+					echo json_encode($arrRespuesta, JSON_UNESCAPED_UNICODE);
+					die();
+				} else {
+
+					date_default_timezone_set("America/Bogota");
+					$nombre = $_FILES["mapaZip"]["name"];
+					$ruta = $_FILES["mapaZip"]["tmp_name"];
+					$tipo = $_FILES["mapaZip"]["type"];
+					$nombreFolder = './temp/' . date("Y-m-d_H-i-s") . '/';
+
+					if ($tipo == "application/x-zip-compressed") {
+						if ($zip->open($ruta) === TRUE) {
+
+							$validarEstructuraZip = false;
+
+							for ($i = 0; $i < $zip->numFiles; $i++) {
+								($zip->getNameIndex($i) === "index.html") && ($validarEstructuraZip = true);
+							}
+
+							if ($validarEstructuraZip) {
+								$archivoExtraido = $zip->extractTo($nombreFolder);
+								$zip->close();
+
+								$rutaLimpia = str_replace("./", "", $mapaRuta);
+								$rutaLimpia = str_replace("/index.html", "", $rutaLimpia);
+
+								if ($archivoExtraido) {
+									if (!empty($mapaRuta) && $mapaRuta !== null && is_dir($rutaLimpia)) {
+										$this->deleteDirectory($rutaLimpia);
+									}
+
+									$mapaRuta = $nombreFolder . 'index.html';
+								}
+							} else {
+								$arrRespuesta = array('status' => 'warning', 'msg' => 'El archivo .zip no contiene la estructura correspondiente. <br> Recuerda que las carpetas del mapa deben de estar en la raiz del archivo');
+								echo json_encode($arrRespuesta, JSON_UNESCAPED_UNICODE);
+								die();
+							}
+						} else {
+							$arrRespuesta = array('status' => 'warning', 'msg' => 'No se logró descomprimir el archivo .zip');
+							echo json_encode($arrRespuesta, JSON_UNESCAPED_UNICODE);
+							die();
+						}
+					} else {
+						$arrRespuesta = array('status' => 'warning', 'msg' => 'Solo se permiten archivos con extension .zip');
+						echo json_encode($arrRespuesta, JSON_UNESCAPED_UNICODE);
+						die();
+					}
+				}
+			}
+
+			$peticion = $this->editarMapaController($mapaId, $nombreMapa, $descripcionMapa, $mapaRuta);
+
+			if ($peticion > 0) {
+				$arrRespuesta = array('status' => 'success', 'msg' => 'Mapa actualizado correctamente');
+			} else {
+				$arrRespuesta = array('status' => 'error', 'msg' => 'Ocurrió un error en la actualización, por favor validar de nuevo');
+			}
+		} else {
+			$arrRespuesta = array('status' => 'error', 'msg' => 'La peticion HTTP, no corresponde al método.');
+		}
+
+		echo json_encode($arrRespuesta, JSON_UNESCAPED_UNICODE);
+		die();
+	}
+
+
+	private function deleteDirectory($dir)
+	{
+		if (!file_exists($dir)) {
+			return true;
+		}
+
+		if (!is_dir($dir)) {
+			return unlink($dir);
+		}
+
+		foreach (scandir($dir) as $item) {
+			if ($item == '.' || $item == '..') {
+				continue;
+			}
+
+			if (!$this->deleteDirectory($dir . DIRECTORY_SEPARATOR . $item)) {
+				return false;
+			}
+		}
+
+		return rmdir($dir);
 	}
 }

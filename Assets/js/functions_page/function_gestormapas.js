@@ -51,7 +51,7 @@ const getAllMaps = () => {
                   <button class="btn btn-outline-primary dropdown-toggle w-100" id="dropdownMenu2" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Gestionar</button>
                   <div class="dropdown-menu w-100" aria-labelledby="dropdownMenu2" x-placement="bottom-start" style="position: absolute; transform: translate3d(0px, 34px, 0px); top: 0px; left: 0px; will-change: transform;">
                     <button onclick='verMapa(${jsonInfo});' class="dropdown-item" type="button">Ver <i class="fa fa-eye fa-lg ml-2 text-dark"></i> </button>
-                    <button class="dropdown-item" type="button">Editar <i class="icon-settings fa-lg ml-2 text-dark"></i> </button>
+                    <button onclick='editarMapa(${jsonInfo});' class="dropdown-item" type="button">Editar <i class="icon-settings fa-lg ml-2 text-dark"></i> </button>
                     ${btnActualizarOEliminar}
                   </div>
                 </div>
@@ -93,7 +93,7 @@ const AddMapas = () => {
                     <input class="form-control" id="nombreMapa" name="nombreMapa" type="text" placeholder="Nombre del mapa">
                   </div>
                   <div class="col-md-12 mb-2">
-                    <label for="name">Subir mapa</label>
+                    <label for="name">Subir archivo .zip del mapa</label>
                     <input class="form-control" id="mapaZip" name="mapaZip" type="file" accept=".zip">
                   </div>
                   <div class="col-md-12 mb-2">
@@ -110,7 +110,7 @@ const AddMapas = () => {
     `;
 
   Swal.fire({
-    title: 'Agregar Mapa',
+    title: 'Agregar mapa',
     html: htmlModal,
     showCancelButton: false,
     showConfirmButton: false,
@@ -257,7 +257,7 @@ const onSubmitFormularioAgregarMapa = () => {
 
   try {
 
-    var formulario = new FormData(document.getElementById('formAgregarMapa'));
+    const formulario = new FormData(document.getElementById('formAgregarMapa'));
     $.ajax({
       type: 'POST',
       url: base_url + 'gestormapas/addMapa',
@@ -273,19 +273,7 @@ const onSubmitFormularioAgregarMapa = () => {
       success: function ({ status = null, msg = null, data = null }) {
         message(msg, status);
 
-        Swal.fire({
-          icon: status,
-          html: `<h3>${msg}</h3>`,
-          showCloseButton: true,
-          showCancelButton: false,
-          cancelButtonText: "Cerrar",
-          showConfirmButton: false,
-        }).then(() => {
-          if (status === "success") {
-            setTimeout(() => { getAllMaps() }, 300);
-          }
-        });
-
+        (status === "success") && (setTimeout(() => { getAllMaps() }, 300));
       },
       error: () => {
         message("Ocurrió un error, por favor revisar los datos enviados", "error");
@@ -296,5 +284,82 @@ const onSubmitFormularioAgregarMapa = () => {
     throw new Error(e.message);
   }
 
+}
+
+
+
+const editarMapa = (allDataMapa) => {
+
+  const { mapa_descripcion, mapa_id, mapa_nombre, mapa_ruta } = allDataMapa;
+
+
+  const htmlModal = `
+    <div class="col-mb-12 m-2 p-2" style="font-size: 14px; text-align: left; overflow: hidden;">
+      <form id="formEditarMapa">
+        <div class="row">
+          <div class="col-md-12 mb-2">
+            <label for="name">Nombre del mapa</label>
+            <input value="${mapa_id}" type="hidden" id="mapa" name="mapa" />
+            <input value="${mapa_ruta}" type="hidden" id="mapaRuta" name="mapaRuta" />
+            <input value="${mapa_nombre}" class="form-control" id="nombreMapa" name="nombreMapa" type="text" placeholder="Nombre del mapa">
+          </div>
+          <div class="col-md-12 mb-2">
+            <label for="name">Subir archivo .zip del mapa</label>
+            <input class="form-control" id="mapaZip" name="mapaZip" type="file" accept=".zip">
+          </div>
+          <div class="col-md-12 mb-2">
+            <label for="name">Descripción del mapa</label>
+            <textarea value="${mapa_descripcion}" style="resize: none;" class="form-control" id="descripcionMapa" name="descripcionMapa" rows="2" placeholder="Descripción del mapa">${mapa_descripcion}</textarea>
+          </div>
+          <div class="col-md-12 mb-2">
+            <br>
+            <button onclick="onSubmitFormularioEditarMapa()" type="button" class="btn btn-success">Guardar</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  `;
+
+  Swal.fire({
+    title: 'Actualizar mapa',
+    html: htmlModal,
+    showCancelButton: false,
+    showConfirmButton: false,
+    showCloseButton: true,
+  });
+
+}
+
+
+const onSubmitFormularioEditarMapa = () => {
+
+  try {
+
+    const formulario = new FormData(document.getElementById('formEditarMapa'));
+
+    $.ajax({
+      type: 'POST',
+      url: base_url + 'gestormapas/editarMapa',
+      data: formulario,
+      cache: false,
+      contentType: false,
+      processData: false,
+      method: 'POST',
+      async: false,
+      enctype: 'multi part/form-data',
+      dataType: "json",
+      beforeSend: () => { overlay(true) },
+      success: function ({ status = null, msg = null, data = null }) {
+        message(msg, status);
+        (status === "success") && (setTimeout(() => { getAllMaps() }, 300));
+      },
+      error: () => {
+        message("Ocurrió un error, por favor revisar los datos enviados", "error");
+      }
+    });
+
+  } catch (e) {
+    throw new Error(e.message);
+  }
 
 }
