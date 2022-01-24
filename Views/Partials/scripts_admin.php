@@ -24,6 +24,8 @@
 <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.6.5/js/buttons.bootstrap4.min.js"></script>
 <script type="text/javascript" src="https://cdn.datatables.net/select/1.3.1/js/dataTables.select.min.js"></script>
 <script type="text/javascript" src="https://editor.datatables.net/extensions/Editor/js/dataTables.editor.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/bootstrap-select.min.js"></script>
+  <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/i18n/defaults-*.min.js"></script> -->
 <script type="text/javascript" src="<?php echo media(); ?>js/functions_page/helpers.js"></script>
 <script type="text/javascript" src="<?= media(); ?>js/functions_page/<?= $data['page_functions_js'] . "?v=" . rand() ?>"></script> <!-- Se envia un parametro random a la funcion de JS para limpiar la caché -->
 <!-- SCRIPTS TO PAGE -->

@@ -114,8 +114,9 @@ class GestorMapas extends Facade
 	{
 		if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-			$peticion = $this->guardarMapaUsuario($_POST['mapaId'], $_POST['usuId']);
-			return ($peticion != false) ? $peticion : false;
+			$peticion = $this->guardarMapaUsuario($_POST['mapaId'], json_decode($_POST['usuId']));
+			($peticion != false) ? $arrRespuesta = array('status' => 'success', 'msg' => 'Se guardó el mapa correctemente') : false;
+			echo json_encode($arrRespuesta, JSON_UNESCAPED_UNICODE);
 		} else {
 			$arrRespuesta = array('status' => 'error', 'msg' => 'La peticion HTTP, no corresponde al método.');
 			echo json_encode($arrRespuesta, JSON_UNESCAPED_UNICODE);

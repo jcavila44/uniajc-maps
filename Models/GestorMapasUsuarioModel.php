@@ -18,45 +18,41 @@ class GestorMapasUsuarioModel extends MySQL
 {
 
     private int $MapaID;
-    private Array $UsuId;
 
     public function __construct()
     {
         parent::__construct();
     }
 
-    public function addRelationMapaUser(int $mapaId, Array $usuId)
+    public function addRelationMapaUser(int $mapaId = 23, Array $usuId = array(1,2))
     {
 
-        
-    $this->MapaID =  $mapaId;
-    $this->UsuId = $usuId;
+         $arrInformacion = [];
 
+        $this->MapaID =  $mapaId;
+        
         $query = "INSERT INTO 
             mapa_usuario(
                 mapa_id,
                 usu_id
             )
-            VALUES
-            (?,?),
-            (?,?),
-            (?,?)
-            ";
-            $lengthArray = count($usuId);
-            foreach ($usuId as $key => $value) {
-                $query .=  "(?,?)";
-                if($lengthArray < $key){
-                    $query .=  ",";
-                }
+            VALUES ";
+        $lengthArray = count($usuId);
+        
+        foreach ($usuId as $key => $value) {
+            $query .=  "(?,?)";
+            $test = array_push($arrInformacion, $this->MapaID, $value);
+            if ($key < $lengthArray - 1 ) {
+                $query .=  ", ";
+            }else{
+                $query .=  ";";
             }
+        }
 
-        $arrInformacion = array(
-            $this->MapaID,
-            $this->UsuId
-        );
+        
+        
+        $peticion = $this->Insert($query, $arrInformacion);
 
-        $peticion = $this->Insert($query);
-
-    return ($peticion > 0) ? $peticion : false;
+        return ($peticion > 0) ? $peticion : false;
     }
 }

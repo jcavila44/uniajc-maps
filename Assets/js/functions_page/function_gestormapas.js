@@ -113,8 +113,8 @@ const AddMapas = () => {
                         <div class="col-md-12">
                         <div class="input-group">
                         
-                        <select class="custom-select" id="UserList" aria-label="Example select with button addon">
-                        <option selected>Choose...</option>`;
+                        <select id="UserList" data-size="5" data-live-search="true" multiple style="width: 100%">
+                        <option disabled>Choose...</option>`;
 
       objData.data.forEach((User) => {
 
@@ -122,20 +122,8 @@ const AddMapas = () => {
       });
 
       htmlModal += `</select>
-                        <div class="input-group-append">
-                          <button class="btn btn-secondary"  id="addUser" type="button">Agregar Usuario</button>
-                        </div>
-
-                        </div>
-                        </select>
-                        </div>
-                        
-                      </div>
-                        <div class="col-md-12">
-                        <label>Usuarios agregados</label>
-                        <ul id='UserAdded'>
-                        </ul>
-                        </div>
+                   </div>
+                     
                       <div class="col-md-12 mb-2">
                         <br>
                         <button onclick="onSubmitFormularioAgregarMapa()" type="button" class="btn btn-success">Guardar</button>
@@ -152,26 +140,8 @@ const AddMapas = () => {
         showConfirmButton: false,
         showCloseButton: true,
       });
+      $('#UserList').selectpicker();
 
-      var UserInput = document.getElementById('UserList');
-      var addTaskButton = document.getElementById('addUser');
-      var ListUserAdded = document.getElementById('UserAdded');
-
-      const addTask = function () {
-        let id = UserInput.options[UserInput.selectedIndex].value;
-        let text = UserInput.options[UserInput.selectedIndex].getAttribute("dataName");
-        UserInput.options[UserInput.selectedIndex].remove();
-        if (text) {
-          var li = document.createElement('li');
-          li.innerHTML = "<label dataId=" + id + ">" + text + "</label>";
-          ListUserAdded.appendChild(li);
-        }
-
-      }
-
-      if (addTaskButton && UserInput) {
-        addTaskButton.onclick = addTask;
-      }
     }
   });
 
@@ -317,35 +287,13 @@ const onSubmitFormularioAgregarMapa = () => {
 
 
   try {
-
+    console.log("Funcionó el botón")
     var formulario = new FormData(document.getElementById('formAgregarMapa'));
-    // $.ajax({
-    //   type: 'POST',
-    //   url: base_url + 'gestormapas/addMapa',
-    //   data: formulario,
-    //   cache: false,
-    //   contentType: false,
-    //   processData: false,
-    //   method: 'POST',
-    //   async: false,
-    //   enctype: 'multi part/form-data',
-    //   dataType: "json",
-    //   beforeSend: () => { overlay(true) },
-    //   success: function ({ status = null, msg = null, idRegistered = null, data = null }) {
-    const UserRelationWithMap = document.getElementById('UserAdded');
-    const li = UserRelationWithMap.getElementsByTagName('li');
-    let idusers = [];
-    for (let liElement of li) {
-      const label = liElement.getElementsByTagName('label');
-      for (let labelElement of label) {
-        let idUser = labelElement.getAttribute('dataid');
-        idusers.push(idUser);
-      }
-    }
+
     $.ajax({
       type: 'POST',
-      url: base_url + 'gestormapas/addRelationMapaUser',
-      data: idusers,
+      url: base_url + 'gestormapas/addMapa',
+      data: formulario,
       cache: false,
       contentType: false,
       processData: false,
@@ -355,29 +303,63 @@ const onSubmitFormularioAgregarMapa = () => {
       dataType: "json",
       beforeSend: () => { overlay(true) },
       success: function ({ status = null, msg = null, idRegistered = null, data = null }) {
-        message(msg, status);
-        Swal.fire({
-          icon: status,
-          html: `<h3>${msg}</h3>`,
-          showCloseButton: true,
-          showCancelButton: false,
-          cancelButtonText: "Cerrar",
-          showConfirmButton: false,
-        }).then(() => {
-          if (status === "success") {
-            setTimeout(() => { getAllMaps() }, 300);
-          }
+        $('#UserList').on('hidden.bs.select', function (e) {
+
+          let usuarios = [];
+
+          $.each(e.target.selectedOptions, function (index, obj) {
+            usuarios[index] = obj.value;
+          });
+
+          let test2 = new FormData();
+          test2.append("mapaId", idRegistered);
+          test2.append("usuId", JSON.stringify(usuarios));
+
+          console.log(test2);
+          console.log(idRegistered +'---mapaId');
+          console.log(usuarios+'---usuarios ');
+
+
+          $.ajax({
+            type: 'POST',
+            url: base_url + 'gestormapas/addRelationMapaUser',
+            data: test2,
+            cache: false,
+            contentType: false,
+            processData: false,
+            method: 'POST',
+            async: false,
+            enctype: 'multi part/form-data',
+            dataType: "json",
+            beforeSend: () => { overlay(true) },
+            success: function ({ status = null, msg = null, peticion = null }) {
+              message(msg, status);
+              Swal.fire({
+                icon: status,
+                html: `<h3>${msg}</h3>`,
+                showCloseButton: true,
+                showCancelButton: false,
+                cancelButtonText: "Cerrar",
+                showConfirmButton: false,
+              }).then(() => {
+                if (status === "success") {
+                  setTimeout(() => { getAllMaps() }, 300);
+                }
+              });
+            },
+            error: (err) => {
+              message("Ocurrió un error, por favor revisar los datos enviados", "error");
+              console.log(err);
+            }
+          });
+
         });
+
       },
       error: () => {
         message("Ocurrió un error, por favor revisar los datos enviados", "error");
       }
     });
-    //   },
-    //   error: () => {
-    //     message("Ocurrió un error, por favor revisar los datos enviados", "error");
-    //   }
-    // });
 
   } catch (e) {
     throw new Error(e.message);
