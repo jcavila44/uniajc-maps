@@ -124,4 +124,9 @@ class Facade
   {
     return $this->GestorMapasModel->habilitarMapa($idMapa);
   }
+
+  public function editarMapaController(int $mapaId, string $nombreMapa, string $descripcionMapa, string $ruta)
+  {
+    return $this->GestorMapasModel->editarMapaController($mapaId, $nombreMapa, $descripcionMapa, $ruta);
+  }
 }

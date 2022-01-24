@@ -122,7 +122,7 @@ class GestorMapasModel extends MySQL
                   mapa
               WHERE
                   mapa.est_id = 9 or mapa.est_id = 10
-              ORDER BY mapa.est_id ASC
+              ORDER BY mapa.mapa_id DESC
               ;
     ";
     $peticion = $this->SelectAll($query);
@@ -183,5 +183,35 @@ class GestorMapasModel extends MySQL
     $arrInformacion = array($this->intEstadoId, $this->intMapaId);
     $peticion = $this->Update($query, $arrInformacion);
     return $peticion;
+  }
+
+  public function editarMapaController(int $mapaId, string $nombreMapa, string $descripcionMapa, string $ruta)
+  {
+
+    $this->intMapaId= $mapaId;
+    $this->strMapaNombre = $nombreMapa;
+    $this->strMapaDescripcion = $descripcionMapa;
+    $this->strMapaRuta = $ruta;
+
+    $query = "UPDATE 
+                  mapa
+              SET
+                  mapa_nombre = ?,
+                  mapa_descripcion = ?,
+                  mapa_ruta = ?
+              WHERE
+                  mapa_id = ?
+    ";
+
+    $arrInformacion = array(
+      $this->strMapaNombre,
+      $this->strMapaDescripcion,
+      $this->strMapaRuta,
+      $this->intMapaId
+    );
+
+    $peticion = $this->Update($query, $arrInformacion);
+
+    return ($peticion > 0) ? $peticion : false;
   }
 }
