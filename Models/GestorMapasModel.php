@@ -114,18 +114,32 @@ class GestorMapasModel extends MySQL
     return ($peticion > 0) ? $peticion : false;
   }
 
-  public function obtenerMapasModel()
+  public function obtenerMapasModel(bool $Is_Admin = true, int $user_id = null)
   {
-    $query = "SELECT
-                  *
-              FROM
-                  mapa
-              WHERE
-                  mapa.est_id = 9 or mapa.est_id = 10
-              ORDER BY mapa.mapa_id DESC
-              ;
-    ";
-    $peticion = $this->SelectAll($query);
+    if($Is_Admin){
+      $query = "SELECT
+                    *
+                FROM
+                    mapa
+                WHERE
+                    mapa.est_id = 9 or mapa.est_id = 10
+                ORDER BY mapa.mapa_id DESC
+                ;
+      ";
+      $peticion = $this->SelectAll($query);
+    }else{
+       $query = "SELECT
+        mapa.mapa_id, mapa.mapa_nombre, mapa.mapa_descripcion, mapa.mapa_ruta, mapa.est_id, mapa_usuario.usu_id 
+        FROM
+         mapa_usuario 
+         INNER JOIN mapa ON mapa_usuario.mapa_id=mapa.mapa_id 
+         WHERE mapa_usuario.usu_id = $user_id and mapa.est_id = 9
+                ORDER BY mapa.mapa_id DESC
+                ;
+      ";
+      $peticion = $this->SelectAll($query);
+    }
+
     return $peticion;
   }
 

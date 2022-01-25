@@ -105,9 +105,9 @@ class Facade
     return $this->GestorMapasModel->guardarMapaCapa($idMapa, $idCapa);
   }
 
-  public function obtenerMapas()
+  public function obtenerMapas(bool $Is_Admin = true, int $user_id = null)
   {
-    return $this->GestorMapasModel->obtenerMapasModel();
+    return $this->GestorMapasModel->obtenerMapasModel($Is_Admin, $user_id );
   }
 
   public function getDataMapa(int $idMapa)

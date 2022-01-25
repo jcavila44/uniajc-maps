@@ -41,8 +41,15 @@ class GestorMapas extends Facade
 	public function getAllMapas()
 	{
 		if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-
-			$arrData = $this->obtenerMapas();
+			if($_SESSION['rol_id']!= 1){
+				$Is_Admin = FALSE; 
+				$user_id= $_SESSION['idusuario'];
+			}else{
+				$Is_Admin = true;
+				$user_id= null;
+			}
+			
+			$arrData = $this->obtenerMapas($Is_Admin, $user_id);
 			$arrRespuesta = array('status' => 'success', 'data' => $arrData);
 		} else {
 			$arrRespuesta = array('status' => 'error', 'msg' => 'La peticion HTTP, no corresponde al método');
