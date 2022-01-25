@@ -30,9 +30,9 @@ class Facade
     $this->views = new Views();
   }
 
-  public function obtenerUsuarios()
+  public function obtenerUsuarios(bool $withOutAdmins = False)
   {
-    return $this->GestorUsuariosModel->obtenerUsuariosModel();
+    return $this->GestorUsuariosModel->obtenerUsuariosModel($withOutAdmins);
   }
 
   public function getRoles()

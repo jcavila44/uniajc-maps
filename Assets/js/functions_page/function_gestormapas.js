@@ -86,7 +86,7 @@ const getAllMaps = () => {
 
 const AddMapas = () => {
   $.ajax({
-    url: base_url + 'gestorusuarios/obtenerUsuariosController',
+    url: base_url + 'gestorusuarios/obtenerUsuariosControllerMap',
     type: "GET",
     data: {},
     dataType: "json",
