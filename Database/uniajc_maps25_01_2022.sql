@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 24-01-2022 a las 23:16:10
+-- Tiempo de generación: 25-01-2022 a las 06:59:56
 -- Versión del servidor: 10.4.22-MariaDB
 -- Versión de PHP: 7.4.27
 
@@ -185,12 +185,12 @@ CREATE TABLE `mapa` (
 --
 
 INSERT INTO `mapa` (`mapa_id`, `mapa_nombre`, `mapa_descripcion`, `mapa_ruta`, `est_id`) VALUES
-(22, 'Test2', 'Mapa1', './temp/2022-01-15_09-55-23/index.html', 9),
-(23, 'Test19', 'TestJuanjo19', './temp/2022-01-19_22-04-59/index.html', 9),
-(24, 'test20', 'test', './temp/2022-01-19_22-05-51/index.html', 9),
-(25, 'Test', 'test5:06', './temp/2022-01-24_17-06-57/index.html', 9),
-(26, 'test2', 'test', './temp/2022-01-24_17-07-24/index.html', 9),
-(27, 'test5:14', 'Test5:14Description', './temp/2022-01-24_17-14-30/index.html', 9);
+(28, 'test1', 'test1Descripcion', './temp/2022-01-24_17-58-45/index.html', 9),
+(29, 'test2', 'test2', './temp/2022-01-24_23-17-44/index.html', 9),
+(30, 'test3', 'test3', './temp/2022-01-24_23-18-03/index.html', 10),
+(31, 'test4', 'test4', './temp/2022-01-24_23-18-36/index.html', 9),
+(32, 'test3', 'test3', './temp/2022-01-24_23-19-38/index.html', 10),
+(33, 'test3', 'test3', './temp/2022-01-24_23-20-16/index.html', 9);
 
 -- --------------------------------------------------------
 
@@ -209,8 +209,10 @@ CREATE TABLE `mapa_usuario` (
 --
 
 INSERT INTO `mapa_usuario` (`mapa_user_id`, `mapa_id`, `usu_id`) VALUES
-(48, 27, 2),
-(49, 27, 1);
+(50, 28, 2),
+(51, 29, 1),
+(52, 31, 2),
+(53, 33, 1);
 
 -- --------------------------------------------------------
 
@@ -287,8 +289,9 @@ CREATE TABLE `rol_mapa` (
 
 CREATE TABLE `token` (
   `token_id` int(11) NOT NULL,
+  `token` varchar(100) NOT NULL,
   `token_fecha` date NOT NULL,
-  `token_vencido` tinyint(1) NOT NULL,
+  `token_fecha_vencido` datetime NOT NULL,
   `usu_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -314,7 +317,7 @@ CREATE TABLE `usuario` (
 
 INSERT INTO `usuario` (`usu_id`, `usu_cedula`, `usu_correo`, `usu_nombre`, `usu_password`, `rol_id`, `est_id`) VALUES
 (1, '1144211277', 'jcavila@estudiante.uniajc.edu.co', 'Jose Carlos Avila Perea', '$2y$10$3GgidhDfOO/3PziXIOQbzuZgVldqf2JTEQKZz3f5/2JBAEVxQj9Im', 2, 7),
-(2, '321', 'jjosecastro@estudiante.uniajc.edu.co', 'Juan Jose Castro', 'prueba', 1, 7);
+(2, '321', 'jjosecastro@estudiante.uniajc.edu.co', 'Juan Jose Castro', '123CY9ZGrfHLE', 1, 7);
 
 --
 -- Índices para tablas volcadas
@@ -457,13 +460,13 @@ ALTER TABLE `estado_tipo`
 -- AUTO_INCREMENT de la tabla `mapa`
 --
 ALTER TABLE `mapa`
-  MODIFY `mapa_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
+  MODIFY `mapa_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
 
 --
 -- AUTO_INCREMENT de la tabla `mapa_usuario`
 --
 ALTER TABLE `mapa_usuario`
-  MODIFY `mapa_user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=50;
+  MODIFY `mapa_user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=54;
 
 --
 -- AUTO_INCREMENT de la tabla `menu_capa_mapa`
@@ -499,7 +502,7 @@ ALTER TABLE `rol_mapa`
 -- AUTO_INCREMENT de la tabla `token`
 --
 ALTER TABLE `token`
-  MODIFY `token_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `token_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
 
 --
 -- AUTO_INCREMENT de la tabla `usuario`
