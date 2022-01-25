@@ -147,33 +147,21 @@ class Login extends Facade
 				$_SESSION['emailUser'] = $correo;
 
 				$data = generate_Token($correo);
-				$this->saveTokenModel($data['dateNow'], $data['expDate'], $data['token'], $ObtenerUsuario['usu_id']);
+				$peticion = $this->saveTokenModel($data['dateNow'], $data['expDate'], $data['token'], $ObtenerUsuario['usu_id']);
 
+				if ($peticion > 0) {
+					$body = '
+						Hola ' . $correo . ' <br>. 
+						Este es tu link para la recuperación de su contraseña <a href="' . base_url() . 'login/TokenValidation?token=' . $data['token'] . '" > Link de recuperación </a>  <br> 
+						Tienes 30 minutos antes de que se te expire tu oportunidad de recuperar la contraseña. <br> <br>
+						Gracias por su atención.
+					';
 
+					$correoEnviado = sendOwnEmail($correo, 'Recover password UNIAJC MAPS', $body);
 
-				$mail = new PHPMailer(true);
-
-				try {
-					$mail->isSMTP();
-					$mail->Host       = 'smtp.office365.com;';
-					$mail->SMTPAuth   = true;
-					$mail->Username   = 'jjosecastro@estudiante.uniajc.edu.co';
-					$mail->Password   = '990804Cafeto6';
-					$mail->SMTPSecure = 'tls';
-					$mail->Port       = 587;
-
-					$mail->setFrom('jjosecastro@estudiante.uniajc.edu.co', 'Juan Jose Castro Cruz');
-					$mail->addAddress($correo);
-
-					$mail->isHTML(true);
-					$mail->Subject = 'Recover password UNIAJC MAPS';
-					$mail->Body    = 'Hola ' . $correo . ' este es tu link de recuperacion de la contraseña <a href="' . base_url() . 'login/TokenValidation?token=' . $data['token'] . '" > Link de recuperacion </a> Tienes 30minutos antes de que se te expire, tu oportunidad de recuperar contraseña';
-					$mail->AltBody = 'Body in plain text for non-HTML mail clients';
-					$enviar = $mail->send();
-
-					$arrRespuesta = array('status' => 'success', 'msg' => 'El correo se ha enviado correctamente');
-				} catch (Exception $e) {
-					$arrRespuesta = array('status' => 'error', 'msg' => 'El correo no se ha enviado correctamente ' . $mail->ErrorInfo . '');
+					$arrRespuesta = ($correoEnviado['status'] == "success") ? $correoEnviado : array('status' => 'warning', 'msg' => 'Token guardado correctamente pero el correo no se logró enviar.');
+				} else {
+					$arrRespuesta = array('status' => 'error', 'msg' => 'El token no fué guardado correctamente.');
 				}
 			} else {
 				$arrRespuesta = array('status' => 'error', 'msg' => 'El usuario no fue encontrado');

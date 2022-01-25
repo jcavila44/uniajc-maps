@@ -1,5 +1,5 @@
 $(document).ready(function () {
-  getAllUsers();
+  setTimeout(() => { getAllUsers() }, 300);
   tableGestorUsuarios = startTable("tableGestorUsuarios");
 
 });
@@ -23,7 +23,6 @@ const getAllUsers = () => {
       overlay(false);
 
       if (objData.status === "success") {
-        // message("Información consultada correctamente", "success");
 
         let htmlTable = `
             <thead>
@@ -140,10 +139,10 @@ const onClickAgregarUsuarios = () => {
   }).then((result) => {
 
     const allData = {
-      nombreUsuario: $("#nombreUsuario").val(),
-      cedulaUsuario: $("#cedulaUsuario").val(),
-      CorreoUsuario: $("#CorreoUsuario").val(),
-      rolUsuario: $("#rolUsuario").val(),
+      nombreUsuario: $("#nombreUsuario").val() || '',
+      cedulaUsuario: $("#cedulaUsuario").val() || '',
+      CorreoUsuario: $("#CorreoUsuario").val() || '',
+      rolUsuario: $("#rolUsuario").val() || '',
     }
 
     if (result.value) {
@@ -190,17 +189,27 @@ const guardarInformacionUsuario = ({ nombreUsuario, cedulaUsuario, CorreoUsuario
       nombreUsuario: String(nombreUsuario),
       cedulaUsuario: String(cedulaUsuario),
       CorreoUsuario: String(CorreoUsuario),
-      rolUsuario: parseInt(rolUsuario),
+      rolUsuario: rolUsuario,
     },
     dataType: "json",
     beforeSend: () => { overlay(true) },
     success: (objData) => {
+      overlay(false);
+
       if (objData.status === "success") {
-        message("Usuario guardado correctamente", "success");
-        getAllUsers();
+        Swal.fire({
+          icon: "success",
+          html: `<h3>Usuario guardado correctamente. <br> Recuerde que la contraseña será enviada al correo correspondiente.</h3>`,
+          showConfirmButton: true,
+          confirmButtonText: 'Continuar',
+          confirmButtonColor: '#0069d9',
+          showCancelButton: false,
+        }).then((result) => {
+          setTimeout(() => { getAllUsers() }, 300);
+        })
 
       } else {
-        message("Ocurrió un error inesperado, por favor vuelva a intentar", "warning");
+        message(objData.msg, "warning");
       }
 
     },
@@ -263,8 +272,7 @@ const inhabilitarUsuario = (idUsuario) => {
     beforeSend: () => { overlay(true) },
     success: (objData) => {
       if (objData.status === "success") {
-        message("Usuario eliminado correctamente", "success");
-        getAllUsers();
+        setTimeout(() => { getAllUsers() }, 300);
 
       } else {
         message("Ocurrió un error inesperado, por favor vuelva a intentar", "warning");
@@ -291,8 +299,7 @@ const habilitarUsuario = (idUsuario) => {
     beforeSend: () => { overlay(true) },
     success: (objData) => {
       if (objData.status === "success") {
-        message("Usuario habilitado correctamente", "success");
-        getAllUsers();
+        setTimeout(() => { getAllUsers() }, 300);
 
       } else {
         message("Ocurrió un error inesperado, por favor vuelva a intentar", "warning");
@@ -389,8 +396,7 @@ const actualizarInformacionUsuario = ({ nombreUsuario, cedulaUsuario, CorreoUsua
     beforeSend: () => { overlay(true) },
     success: (objData) => {
       if (objData.status === "success") {
-        message("Usuario actualizado correctamente", "success");
-        getAllUsers();
+        setTimeout(() => { getAllUsers() }, 300);
 
       } else {
         message("Ocurrió un error inesperado, por favor vuelva a intentar", "warning");
