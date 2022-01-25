@@ -299,58 +299,75 @@ const onSubmitFormularioAgregarMapa = () => {
       dataType: "json",
       beforeSend: () => { overlay(true) },
       success: function ({ status = null, msg = null, idRegistered = null, data = null }) {
-        $('#UserList').on('hidden.bs.select', function (e) {
-
-          let usuarios = [];
-
-          $.each(e.target.selectedOptions, function (index, obj) {
-            usuarios[index] = obj.value;
-          });
-
-          let test2 = new FormData();
-          test2.append("mapaId", idRegistered);
-          test2.append("usuId", JSON.stringify(usuarios));
-
-          console.log(test2);
-          console.log(idRegistered +'---mapaId');
-          console.log(usuarios+'---usuarios ');
-
-
-          $.ajax({
-            type: 'POST',
-            url: base_url + 'gestormapas/addRelationMapaUser',
-            data: test2,
-            cache: false,
-            contentType: false,
-            processData: false,
-            method: 'POST',
-            async: false,
-            enctype: 'multi part/form-data',
-            dataType: "json",
-            beforeSend: () => { overlay(true) },
-            success: function ({ status = null, msg = null, peticion = null }) {
-              message(msg, status);
-              Swal.fire({
-                icon: status,
-                html: `<h3>${msg}</h3>`,
-                showCloseButton: true,
-                showCancelButton: false,
-                cancelButtonText: "Cerrar",
-                showConfirmButton: false,
-              }).then(() => {
-                if (status === "success") {
-                  setTimeout(() => { getAllMaps() }, 300);
-                }
-              });
-            },
-            error: (err) => {
-              message("Ocurrió un error, por favor revisar los datos enviados", "error");
-              console.log(err);
+        if(status != "success"){
+          message(msg, status);
+          Swal.fire({
+            icon: status,
+            html: `<h3>${msg}</h3>`,
+            showCloseButton: true,
+            showCancelButton: false,
+            cancelButtonText: "Cerrar",
+            showConfirmButton: false,
+          }).then(() => {
+            if (status === "success") {
+              setTimeout(() => { getAllMaps() }, 300);
             }
           });
+        }else{
+          $('#UserList').on('hidden.bs.select', function (e) {
+  
+            let usuarios = [];
+  
+            $.each(e.target.selectedOptions, function (index, obj) {
+              usuarios[index] = obj.value;
+            });
+  
+            let test2 = new FormData();
+            test2.append("mapaId", idRegistered);
+            test2.append("usuId", JSON.stringify(usuarios));
+  
+            console.log(test2);
+            console.log(idRegistered +'---mapaId');
+            console.log(usuarios+'---usuarios ');
+  
+  
+            $.ajax({
+              type: 'POST',
+              url: base_url + 'gestormapas/addRelationMapaUser',
+              data: test2,
+              cache: false,
+              contentType: false,
+              processData: false,
+              method: 'POST',
+              async: false,
+              enctype: 'multi part/form-data',
+              dataType: "json",
+              beforeSend: () => { overlay(true) },
+              success: function ({ status = null, msg = null, peticion = null }) {
+                message(msg, status);
+                Swal.fire({
+                  icon: status,
+                  html: `<h3>${msg}</h3>`,
+                  showCloseButton: true,
+                  showCancelButton: false,
+                  cancelButtonText: "Cerrar",
+                  showConfirmButton: false,
+                }).then(() => {
+                  if (status === "success") {
+                    setTimeout(() => { getAllMaps() }, 300);
+                  }
+                });
+              },
+              error: (err) => {
+                message("Ocurrió un error, por favor revisar los datos enviados", "error");
+                console.log(err);
+              }
+            });
+  
+          });
 
-        });
-
+        }
+        
       },
       error: () => {
         message("Ocurrió un error, por favor revisar los datos enviados", "error");

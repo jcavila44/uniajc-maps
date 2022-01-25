@@ -95,7 +95,7 @@ class GestorMapas extends Facade
 									$mapaSave = $this->guardarMapaController($nombreMapa, $descripcionMapa, $nombreFolder . 'index.html');
 	
 									if ($mapaSave != false) {
-										$arrRespuesta = array('status' => 'success', 'msg' => 'Se guardó el mapa correctemente');
+										$arrRespuesta = array('status' => 'success', 'msg' => 'Se guardó el mapa correctemente', 'idRegistered' => $mapaSave);
 									} else {
 										$arrRespuesta = array('status' => 'error', 'msg' => 'Ocurrió un error en la inserción, por favor validar de nuevo');
 									}
