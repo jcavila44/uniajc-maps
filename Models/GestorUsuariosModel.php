@@ -20,6 +20,7 @@ class GestorUsuariosModel extends MySQL
   private string $strUsuCedula;
   private string $strUsuNombre;
   private string $strUsuPassword;
+  private string $strSaltCrypt = "4c9458523191fcafdc35990b85ee868a";    //Codigo Un14Jc_M4p$* generado bajo el hash MD5 
   private int $intRolId;
   private int $intEstadoId;
   private int $intUsuId;
@@ -66,7 +67,7 @@ class GestorUsuariosModel extends MySQL
     $this->strUsuCorreo = $CorreoUsuario;
     $this->intRolId = $rolUsuario;
     $this->intEstadoId = 7;
-    $this->strUsuPassword = crypt($cedulaUsuario, '123');
+    $this->strUsuPassword = crypt($cedulaUsuario, $this->strSaltCrypt);
 
     $query = "INSERT INTO 
                   `usuario` 
