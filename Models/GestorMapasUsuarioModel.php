@@ -48,11 +48,26 @@ class GestorMapasUsuarioModel extends MySQL
                 $query .=  ";";
             }
         }
-
-        
         
         $peticion = $this->Insert($query, $arrInformacion);
-
         return ($peticion > 0) ? $peticion : false;
+    }
+
+    public function getRelationMapaUser(int $mapaId)
+    {
+        $this->MapaID =  $mapaId;
+        
+        $query = "SELECT * FROM mapa_usuario WHERE mapa_id = $mapaId;";
+        $peticion = $this->SelectAll($query);
+        return $peticion;
+
+    }
+
+    public function deleteRelationMapaUser(int $mapaId = 23){
+        $this->MapaID =  $mapaId;
+        
+        $query = "DELETE FROM mapa_usuario WHERE mapa_id = $mapaId;";
+        $peticion = $this->Delete($query);
+        return $peticion;
     }
 }

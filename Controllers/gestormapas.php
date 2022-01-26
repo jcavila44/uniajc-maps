@@ -132,8 +132,28 @@ class GestorMapas extends Facade
 	{
 		if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-			$peticion = $this->guardarMapaUsuario($_POST['mapaId'], json_decode($_POST['usuId']));
-			($peticion != false) ? $arrRespuesta = array('status' => 'success', 'msg' => 'Se guardó el mapa correctemente') : false;
+			if(isset($_POST['FirstDeleteRelation'])){
+				$peticion = $this->EliminarMapaUsuario($_POST['mapaId']);
+				($peticion != false) ? $arrRespuesta = array('status' => 'success', 'msg' => 'Se editó el mapa correctemente') : false;
+			}
+			if(isset($_POST['usuId'])){
+				$peticion = $this->guardarMapaUsuario($_POST['mapaId'], json_decode($_POST['usuId']));
+				($peticion != false) ? $arrRespuesta = array('status' => 'success', 'msg' => 'Se editó el mapa correctemente') : false;
+			}
+			echo json_encode($arrRespuesta, JSON_UNESCAPED_UNICODE);
+		} else {
+			$arrRespuesta = array('status' => 'error', 'msg' => 'La peticion HTTP, no corresponde al método.');
+			echo json_encode($arrRespuesta, JSON_UNESCAPED_UNICODE);
+		}
+	}
+
+	public function GetRelationMapaUser()
+	{
+		if ($_SERVER['REQUEST_METHOD'] == 'GET') {
+			$peticion = $this->obtenerRelacionMapaUsuario($_GET['mapaId']);
+			$arrData = $this->obtenerUsuarios(True);
+
+			$arrRespuesta = array('status' => 'success', 'data' => $peticion, 'allUsers' => $arrData );
 			echo json_encode($arrRespuesta, JSON_UNESCAPED_UNICODE);
 		} else {
 			$arrRespuesta = array('status' => 'error', 'msg' => 'La peticion HTTP, no corresponde al método.');
@@ -417,9 +437,9 @@ class GestorMapas extends Facade
 					}
 				}
 			}
-
+			
 			$peticion = $this->editarMapaController($mapaId, $nombreMapa, $descripcionMapa, $mapaRuta);
-
+			
 			if ($peticion > 0) {
 				$arrRespuesta = array('status' => 'success', 'msg' => 'Mapa actualizado correctamente');
 			} else {

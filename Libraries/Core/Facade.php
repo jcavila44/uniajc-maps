@@ -100,6 +100,16 @@ class Facade
     return $this->GestorMapasUsuarioModel->addRelationMapaUser($mapaId, $usuId);
   }
 
+  public function EliminarMapaUsuario(int $mapaId )
+  {
+    return $this->GestorMapasUsuarioModel->deleteRelationMapaUser($mapaId);
+  }
+
+  public function obtenerRelacionMapaUsuario(int $mapaId)
+  {
+    return $this->GestorMapasUsuarioModel->getRelationMapaUser($mapaId);
+  }
+
   public function guardarMapaCapa(int $idMapa, int $idCapa)
   {
     return $this->GestorMapasModel->guardarMapaCapa($idMapa, $idCapa);
