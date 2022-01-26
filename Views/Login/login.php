@@ -40,7 +40,7 @@ $data['page_functions_js'] = 'function_login.js';
                   <button onclick="onClickIngresar()" class="btn btn-primary px-4" type="button">Ingresar</button>
                 </div>
                 <div class="col-6 text-right">
-                  <a href="<?php echo ROUTES['app']['ForgotPassword'] ?>" class="btn btn-link px-0" type="button">Forgot password?</a>
+                  <a href="<?php echo ROUTES['app']['ForgotPassword'] ?>" class="btn btn-link px-0" type="button">Recuperar contraseña</a>
                 </div>
               </div>
             </div>

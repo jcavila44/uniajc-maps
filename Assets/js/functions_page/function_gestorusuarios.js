@@ -105,19 +105,19 @@ const onClickAgregarUsuarios = () => {
     <div class="col-mb-12" style="font-size: 14px; text-align: left;">
       <div class="row">
         <div class="col-md-6 mb-2">
-          <label for="name">Nombres y apellido</label>
+          <label for="name">${asteriskRequired} Nombres y apellido</label>
           <input class="form-control" id="nombreUsuario" name="nombreUsuario" type="text" placeholder="Nombres y apellidos del usuario">
         </div>
         <div class="col-md-6 mb-3">
-          <label for="name">Cédula</label>
-          <input class="form-control" id="cedulaUsuario" name="cedulaUsuario" type="text" placeholder="Cédula del usuario">
+          <label for="name">${asteriskRequired} Cédula</label>
+          <input class="form-control" id="cedulaUsuario" name="cedulaUsuario" type="number" placeholder="Cédula del usuario">
         </div>
         <div class="col-md-6 mb-3">
-          <label for="name">Correo</label>
+          <label for="name">${asteriskRequired} Correo</label>
           <input class="form-control" id="CorreoUsuario" name="CorreoUsuario" type="email" placeholder="Correo del usuario">
         </div>
         <div class="col-md-6 mb-2">
-          <label for="rolUsuario">Rol</label>
+          <label for="rolUsuario">${asteriskRequired} Rol</label>
           <select class="form-control" id="rolUsuario" name="rolUsuario">
               <option disabled selected>Seleccione...</option>
               ${optionsRoles} 
@@ -181,42 +181,51 @@ const consultarRolesUsuarios = () => {
 
 const guardarInformacionUsuario = ({ nombreUsuario, cedulaUsuario, CorreoUsuario, rolUsuario }) => {
 
-  $.ajax({
-    async: true,
-    url: base_url + 'gestorusuarios/saveInfoUserController',
-    type: "POST",
-    data: {
-      nombreUsuario: String(nombreUsuario),
-      cedulaUsuario: String(cedulaUsuario),
-      CorreoUsuario: String(CorreoUsuario),
-      rolUsuario: rolUsuario,
-    },
-    dataType: "json",
-    beforeSend: () => { overlay(true) },
-    success: (objData) => {
-      overlay(false);
 
-      if (objData.status === "success") {
-        Swal.fire({
-          icon: "success",
-          html: `<h3>Usuario guardado correctamente. <br> Recuerde que la contraseña será enviada al correo correspondiente.</h3>`,
-          showConfirmButton: true,
-          confirmButtonText: 'Continuar',
-          confirmButtonColor: '#0069d9',
-          showCancelButton: false,
-        }).then((result) => {
-          setTimeout(() => { getAllUsers() }, 300);
-        })
+  const dataForm = {
+    nombreUsuario: String(wordToCamelCase(nombreUsuario)),
+    cedulaUsuario: String(cedulaUsuario),
+    CorreoUsuario: String(CorreoUsuario.toLowerCase()),
+    rolUsuario: parseInt(rolUsuario),
+  }
 
-      } else {
-        message(objData.msg, "warning");
+  if (validarFormularioAgregarUsuarios(dataForm)) {
+
+    $.ajax({
+      async: true,
+      url: base_url + 'gestorusuarios/saveInfoUserController',
+      type: "POST",
+      data: dataForm,
+      dataType: "json",
+      beforeSend: () => { overlay(true) },
+      success: (objData) => {
+        overlay(false);
+
+        if (objData.status === "success") {
+          Swal.fire({
+            icon: "success",
+            html: `<h3>Usuario guardado correctamente. <br> Recuerde que la contraseña será enviada al correo correspondiente.</h3>`,
+            showConfirmButton: true,
+            confirmButtonText: 'Continuar',
+            confirmButtonColor: '#0069d9',
+            showCancelButton: false,
+          }).then((result) => {
+            setTimeout(() => { getAllUsers() }, 300);
+          })
+
+        } else {
+          message(objData.msg, "warning");
+        }
+
+      },
+      error: (error) => {
+        message("Ocurrió un error en la inserción, por favor revisar los datos enviados", "error");
       }
+    });
 
-    },
-    error: (error) => {
-      message("Ocurrió un error en la inserción, por favor revisar los datos enviados", "error");
-    }
-  });
+  } else {
+    alertaFormularioInvalido();
+  }
 
 }
 
@@ -318,7 +327,6 @@ const habilitarUsuario = (idUsuario) => {
 const onClickActualizarUsuario = ({ rol_descripcion, usu_cedula, usu_correo, usu_id, usu_nombre }) => {
 
   let optionsRoles = consultarRolesUsuarios().map(({ rol_id, rol_descripcion: rol_desc }) => {
-
     return `<option ${(rol_desc === rol_descripcion) && ("selected")} value="${rol_id}">${firstLetterUppercase(rol_desc)}</option>`;
   });
 
@@ -326,19 +334,19 @@ const onClickActualizarUsuario = ({ rol_descripcion, usu_cedula, usu_correo, usu
     <div class="col-mb-12" style="font-size: 14px; text-align: left;">
       <div class="row">
         <div class="col-md-6 mb-2">
-          <label for="name">Nombres y apellido</label>
+          <label for="name">${asteriskRequired} Nombres y apellido</label>
           <input value="${usu_nombre}" class="form-control" id="nombreUsuario" name="nombreUsuario" type="text" placeholder="Nombres y apellidos del usuario">
         </div>
         <div class="col-md-6 mb-3">
-          <label for="name">Cédula</label>
-          <input value="${usu_cedula}" class="form-control" id="cedulaUsuario" name="cedulaUsuario" type="text" placeholder="Cédula del usuario">
+          <label for="name">${asteriskRequired} Cédula</label>
+          <input value="${usu_cedula}" class="form-control" id="cedulaUsuario" name="cedulaUsuario" type="number" placeholder="Cédula del usuario">
         </div>
         <div class="col-md-6 mb-3">
-          <label for="name">Correo</label>
+          <label for="name">${asteriskRequired} Correo</label>
           <input value="${usu_correo}" class="form-control" id="CorreoUsuario" name="CorreoUsuario" type="email" placeholder="Correo del usuario">
         </div>
         <div class="col-md-6 mb-2">
-          <label for="rolUsuario">Rol</label>
+          <label for="rolUsuario">${asteriskRequired} Rol</label>
           <select class="form-control" id="rolUsuario" name="rolUsuario">
               <option disabled selected>Seleccione...</option>
               ${optionsRoles} 
@@ -369,7 +377,11 @@ const onClickActualizarUsuario = ({ rol_descripcion, usu_cedula, usu_correo, usu
 
     if (result.value) {
 
-      actualizarInformacionUsuario(allData);
+      if (validarFormularioActualizacionUsuarios(allData)) {
+        actualizarInformacionUsuario(allData);
+      } else {
+        alertaFormularioInvalido();
+      }
 
     }
 
@@ -386,9 +398,9 @@ const actualizarInformacionUsuario = ({ nombreUsuario, cedulaUsuario, CorreoUsua
     url: base_url + 'gestorusuarios/actualizarInfoUserController',
     type: "POST",
     data: {
-      nombreUsuario: String(nombreUsuario),
+      nombreUsuario: String(wordToCamelCase(nombreUsuario)),
       cedulaUsuario: String(cedulaUsuario),
-      CorreoUsuario: String(CorreoUsuario),
+      CorreoUsuario: String(CorreoUsuario.toLowerCase()),
       rolUsuario: parseInt(rolUsuario),
       usu_id: parseInt(usu_id),
     },

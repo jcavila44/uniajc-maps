@@ -1,3 +1,4 @@
+const asteriskRequired = `<lable class="text-danger">*</lable>`;
 
 const overlay = (show = true) => {
   if (show === true) {
@@ -79,4 +80,35 @@ const wordToCamelCase = (str) => {
 const firstLetterUppercase = (data) => {
   return data.charAt(0).toUpperCase() + data.toLowerCase().slice(1);
 }
+
+const alertaFormularioInvalido = () => {
+  Swal.fire({
+    icon: "warning",
+    title: "Advertencia",
+    html: `
+        <div className="row">
+            <div className="col-12 col-lg-12" style="text-align: left; font-size: 16px; font-weight: 600; margin-bottom: 15px;">
+                Hay un error, por favor revisa el formulario con las siguientes indicaciones:
+            </div>
+            <div className="col-12 col-lg-12" style="text-align: left; font-size: 15px;">
+                ◉ Los campos no permiten carácteres especiales. <small>Ejemplo: !"#$%&/()</small>  <br/>
+                ◉ Los campos no deben estar vacíos. <br/>
+                ◉ Los campos marcados con asterisco son obligatorios. <br/>
+                ◉ Los campos para emails deben tener un formato valido. <small>Ejemplo: test@test.com</small> <br/>
+                ◉ Los campos para cédula son numéricos. <br/>
+                ◉ Los campos para archivos solo aceptan formatos .zip  <br/>
+            </div>
+          </div>
+        <br/>
+    `,
+    showCloseButton: true,
+    showCancelButton: false,
+    showConfirmButton: true,
+    confirmButtonText: 'Cerrar',
+    width: '600px'
+
+  });
+
+}
+
 

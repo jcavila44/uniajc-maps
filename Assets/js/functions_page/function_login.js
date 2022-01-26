@@ -6,7 +6,9 @@ const onClickIngresar = () => {
 
   const correo = document.getElementById("correo").value;
   const password = document.getElementById("password").value;
-  if (correo !== "" && password !== "") {
+  const dataForm = { correo, password };
+
+  if (validarFormularioLogin(dataForm)) {
 
     $.ajax({
       async: true,
@@ -29,8 +31,9 @@ const onClickIngresar = () => {
         message("Ocurrió un error en el sistema, por favor revisar los datos enviados", "error");
       }
     });
+
   } else {
-    message("Los campos no pueden estar vacíos", "warning");
+    alertaFormularioInvalido();
   }
 
 }
@@ -39,7 +42,7 @@ const onClickForgotPassword = () => {
 
   const correo = document.getElementById("correo").value;
 
-  if (correo !== "") {
+  if (validarFormularioForgetPassword({ correo })) {
 
     $.ajax({
       async: true,
@@ -62,8 +65,9 @@ const onClickForgotPassword = () => {
         message("Ocurrió un error en el sistema, por favor revisar los datos enviados" + error, "error");
       }
     });
+
   } else {
-    message("Los campos no pueden estar vacíos", "warning");
+    alertaFormularioInvalido();
   }
 
 }
