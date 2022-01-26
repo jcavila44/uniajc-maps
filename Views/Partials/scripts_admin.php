@@ -25,5 +25,6 @@
 <script type="text/javascript" src="https://cdn.datatables.net/select/1.3.1/js/dataTables.select.min.js"></script>
 <script type="text/javascript" src="https://editor.datatables.net/extensions/Editor/js/dataTables.editor.min.js"></script>
 <script type="text/javascript" src="<?php echo media(); ?>js/functions_page/helpers.js"></script>
+<script type="text/javascript" src="<?php echo media(); ?>js/functions_page/validadores_formularios.js"></script>
 <script type="text/javascript" src="<?= media(); ?>js/functions_page/<?= $data['page_functions_js'] . "?v=" . rand() ?>"></script> <!-- Se envia un parametro random a la funcion de JS para limpiar la caché -->
 <!-- SCRIPTS TO PAGE -->

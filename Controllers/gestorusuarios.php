@@ -63,6 +63,7 @@ class GestorUsuarios extends Facade
 		echo json_encode($arrRespuesta, JSON_UNESCAPED_UNICODE);
 		die();
 	}
+
 	//Metodo para obtener todos los usuarios
 	public function saveInfoUserController()
 	{
@@ -165,7 +166,7 @@ class GestorUsuarios extends Facade
 			$peticion = $this->updateUsuario($nombreUsuario, $cedulaUsuario, $CorreoUsuario, $rolUsuario, $usu_id);
 
 			if ($peticion > 0) {
-				$arrRespuesta = array('status' => 'success', 'msg' => 'Usuario actualizaco correctamente');
+				$arrRespuesta = array('status' => 'success', 'msg' => 'Usuario actualizado correctamente');
 			} else {
 				$arrRespuesta = array('status' => 'error', 'msg' => 'No se logró actualizar');
 			}

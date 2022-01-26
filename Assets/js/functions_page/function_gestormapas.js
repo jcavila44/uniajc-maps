@@ -89,15 +89,15 @@ const AddMapas = () => {
               <form id="formAgregarMapa">
                 <div class="row">
                   <div class="col-md-12 mb-2">
-                    <label for="name">Nombre del mapa</label>
+                    <label for="name">${asteriskRequired} Nombre del mapa</label>
                     <input class="form-control" id="nombreMapa" name="nombreMapa" type="text" placeholder="Nombre del mapa">
                   </div>
                   <div class="col-md-12 mb-2">
-                    <label for="name">Subir archivo .zip del mapa</label>
+                    <label for="name">${asteriskRequired} Subir archivo .zip del mapa</label>
                     <input class="form-control" id="mapaZip" name="mapaZip" type="file" accept=".zip">
                   </div>
                   <div class="col-md-12 mb-2">
-                    <label for="name">Descripción del mapa</label>
+                    <label for="name">${asteriskRequired} Descripción del mapa</label>
                     <textarea style="resize: none;" class="form-control" id="descripcionMapa" name="descripcionMapa" rows="2" placeholder="Descripción del mapa"></textarea>
                   </div>
                   <div class="col-md-12 mb-2">
@@ -255,9 +255,16 @@ const verMapa = (allDataMapa) => {
 
 const onSubmitFormularioAgregarMapa = () => {
 
-  try {
+  const dataForm = {
+    nombreMapa: $("#nombreMapa").val() || '',
+    mapaZip: $("#mapaZip")[0].files[0] || null,
+    descripcionMapa: $("#descripcionMapa").val() || '',
+  };
+
+  if (validarFormularioAgregarMapa(dataForm)) {
 
     const formulario = new FormData(document.getElementById('formAgregarMapa'));
+
     $.ajax({
       type: 'POST',
       url: base_url + 'gestormapas/addMapa',
@@ -280,9 +287,10 @@ const onSubmitFormularioAgregarMapa = () => {
       }
     });
 
-  } catch (e) {
-    throw new Error(e.message);
+  } else {
+    alertaFormularioInvalido();
   }
+
 
 }
 
@@ -298,17 +306,17 @@ const editarMapa = (allDataMapa) => {
       <form id="formEditarMapa">
         <div class="row">
           <div class="col-md-12 mb-2">
-            <label for="name">Nombre del mapa</label>
+            <label for="name">${asteriskRequired} Nombre del mapa</label>
             <input value="${mapa_id}" type="hidden" id="mapa" name="mapa" />
             <input value="${mapa_ruta}" type="hidden" id="mapaRuta" name="mapaRuta" />
             <input value="${mapa_nombre}" class="form-control" id="nombreMapa" name="nombreMapa" type="text" placeholder="Nombre del mapa">
           </div>
           <div class="col-md-12 mb-2">
-            <label for="name">Subir archivo .zip del mapa</label>
+            <label for="name"> Subir archivo .zip del mapa</label>
             <input class="form-control" id="mapaZip" name="mapaZip" type="file" accept=".zip">
           </div>
           <div class="col-md-12 mb-2">
-            <label for="name">Descripción del mapa</label>
+            <label for="name">${asteriskRequired} Descripción del mapa</label>
             <textarea value="${mapa_descripcion}" style="resize: none;" class="form-control" id="descripcionMapa" name="descripcionMapa" rows="2" placeholder="Descripción del mapa">${mapa_descripcion}</textarea>
           </div>
           <div class="col-md-12 mb-2">
@@ -333,7 +341,14 @@ const editarMapa = (allDataMapa) => {
 
 const onSubmitFormularioEditarMapa = () => {
 
-  try {
+  const dataForm = {
+    nombreMapa: $("#nombreMapa").val() || '',
+    mapaZip: $("#mapaZip")[0].files[0] || null,
+    descripcionMapa: $("#descripcionMapa").val() || '',
+    mapa: $("#mapa").val() || '',
+  };
+
+  if (validarFormularioEditarMapa(dataForm)) {
 
     const formulario = new FormData(document.getElementById('formEditarMapa'));
 
@@ -358,8 +373,10 @@ const onSubmitFormularioEditarMapa = () => {
       }
     });
 
-  } catch (e) {
-    throw new Error(e.message);
+  } else {
+    alertaFormularioInvalido();
   }
+
+
 
 }
