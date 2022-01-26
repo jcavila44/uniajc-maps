@@ -31,6 +31,7 @@ const getAllMaps = () => {
             </thead>
             <tbody>
         `;
+        const rolId = document.getElementById('rol_id').value;
 
         objData.data.forEach((mapaProp, key) => {
 
@@ -52,9 +53,17 @@ const getAllMaps = () => {
                 <div class="dropdown">
                   <button class="btn btn-outline-primary dropdown-toggle w-100" id="dropdownMenu2" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Gestionar</button>
                   <div class="dropdown-menu w-100" aria-labelledby="dropdownMenu2" x-placement="bottom-start" style="position: absolute; transform: translate3d(0px, 34px, 0px); top: 0px; left: 0px; will-change: transform;">
-                    <button onclick='verMapa(${jsonInfo});' class="dropdown-item" type="button">Ver <i class="fa fa-eye fa-lg ml-2 text-dark"></i> </button>
+                  <button onclick='verMapa(${jsonInfo});' class="dropdown-item" type="button">Ver <i class="fa fa-eye fa-lg ml-2 text-dark"></i> </button>
+                  `;
+                  if(rolId==1){
+
+                    htmlTable += `  
                     <button onclick='editarMapa(${jsonInfo});' class="dropdown-item" type="button">Editar <i class="icon-settings fa-lg ml-2 text-dark"></i> </button>
                     ${btnActualizarOEliminar}
+                    `;
+                  }
+
+          htmlTable += `
                   </div>
                 </div>
               </td>
