@@ -20,7 +20,7 @@ class GestorMapas extends Facade
 	public function __construct()
 	{
 		session_start();
-		if (!isset($_SESSION['login'])) {
+		if (!isset($_SESSION['login']) || !sessionEsValida($_SESSION['timeout'])) {
 			header('Location: ' . base_url() . "/Logout");
 		}
 

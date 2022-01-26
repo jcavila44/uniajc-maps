@@ -27,5 +27,6 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/bootstrap-select.min.js"></script>
   <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/i18n/defaults-*.min.js"></script> -->
 <script type="text/javascript" src="<?php echo media(); ?>js/functions_page/helpers.js"></script>
+<script type="text/javascript" src="<?php echo media(); ?>js/functions_page/validadores_formularios.js"></script>
 <script type="text/javascript" src="<?= media(); ?>js/functions_page/<?= $data['page_functions_js'] . "?v=" . rand() ?>"></script> <!-- Se envia un parametro random a la funcion de JS para limpiar la caché -->
 <!-- SCRIPTS TO PAGE -->

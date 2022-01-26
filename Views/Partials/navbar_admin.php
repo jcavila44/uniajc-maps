@@ -17,11 +17,8 @@
         </a>
         <div class="dropdown-menu dropdown-menu-right">
           <div class="dropdown-header text-center">
-            <strong>Cuenta</strong>
+            <strong>Bienvenido <br> <?php echo $_SESSION['nombre']; ?> </strong>
           </div>
-          <a class="dropdown-item" href="<?php echo ROUTES['app']['UserProfile'] ?>">
-            <i class="fa fa-user"></i> Perfil
-          </a>
           <a class="dropdown-item" href="<?php echo ROUTES['app']['Logout'] ?>">
             <i class="fa fa-lock"></i> Salir
           </a>

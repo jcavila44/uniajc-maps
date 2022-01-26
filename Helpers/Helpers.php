@@ -195,3 +195,47 @@ function generate_Token($email)
     ];
     return $data;
 }
+
+
+function sendOwnEmail(String $destinatario, String $titulo, String $body)
+{
+
+    $mail = new PHPMailer(true);
+
+    try {
+        $mail->isSMTP();
+        $mail->Host       = MAIL_HOST;
+        $mail->SMTPAuth   = MAIL_SMTPAUTH;
+        $mail->Username   = MAIL_EMAIL;
+        $mail->Password   = MAIL_PASSWORD;
+        $mail->SMTPSecure = MAIL_SMTPSECURE;
+        $mail->Port       = MAIL_PORT;
+
+        $mail->setFrom(MAIL_EMAIL, MAIL_NAME_USER);
+        $mail->addAddress($destinatario);
+
+        $mail->isHTML(true);
+        $mail->Subject = $titulo;
+        $mail->Body    = $body;
+        $mail->AltBody = 'Body in plain text for non-HTML mail clients';
+        $mail->send();
+
+        return array('status' => 'success', 'msg' => 'Correo enviado satisfactoriamente.');
+    } catch (Exception $e) {
+        return array('status' => 'error', 'msg' => 'Correo no enviado');
+    }
+}
+
+
+function sessionEsValida($timeOut)
+{
+
+    $response = false;
+
+    $tiempoMaximoPermitido = 1200;
+    $tiempoInactivo = (isset($timeOut) && is_numeric($timeOut)) ? time() - $timeOut : $tiempoMaximoPermitido + 1;
+
+    $response = ($tiempoInactivo > $tiempoMaximoPermitido) ? false : true;
+
+    return $response;
+}
