@@ -225,3 +225,17 @@ function sendOwnEmail(String $destinatario, String $titulo, String $body)
         return array('status' => 'error', 'msg' => 'Correo no enviado');
     }
 }
+
+
+function sessionEsValida($timeOut)
+{
+
+    $response = false;
+
+    $tiempoMaximoPermitido = 1200;
+    $tiempoInactivo = (isset($timeOut) && is_numeric($timeOut)) ? time() - $timeOut : $tiempoMaximoPermitido + 1;
+
+    $response = ($tiempoInactivo > $tiempoMaximoPermitido) ? false : true;
+
+    return $response;
+}

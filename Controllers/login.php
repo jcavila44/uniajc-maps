@@ -120,6 +120,7 @@ class Login extends Facade
 						$_SESSION['nombre'] = $ObtenerUsuario['usu_nombre'];
 						$_SESSION['cedula'] = $ObtenerUsuario['usu_cedula'];
 						$_SESSION['rol'] = $ObtenerUsuario['rol_descripcion'];
+						$_SESSION['timeout'] = time();
 						$arrRespuesta = array('status' => 'success', 'msg' => 'Inicio de sesión exitoso');
 					} else {
 						$arrRespuesta = array('status' => 'success', 'msg' => 'Usuario inhabilitado');
