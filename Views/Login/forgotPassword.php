@@ -17,7 +17,7 @@
                                         <i class="icon-user"></i>
                                     </span>
                                 </div>
-                                <input id="correo" name="correo" class="form-control" type="text" placeholder="Correo" value="jcavila@estudiante.uniajc.edu.co">
+                                <input id="correo" name="correo" class="form-control" type="text" placeholder="Correo" value="jjosecastro@estudiante.uniajc.edu.co">
                             </div>
                             <div class="row">
                                 <div class="col-8 p-0">

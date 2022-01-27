@@ -30,7 +30,7 @@ class GestorUsuariosModel extends MySQL
     parent::__construct();
   }
 
-  public function obtenerUsuariosModel()
+  public function obtenerUsuariosModel( bool $withOutAdmins = False)
   {
     $query = "SELECT 
                     usuario.usu_id,
@@ -45,9 +45,12 @@ class GestorUsuariosModel extends MySQL
                     rol
                   WHERE 
                     usuario.est_id = estado.estado_id AND 
-                    usuario.rol_id = rol.rol_id
-                  GROUP BY usuario.usu_id DESC
-    ";
+                    usuario.rol_id = rol.rol_id";
+
+                    ($withOutAdmins)? $query .= " AND usuario.rol_id != 1":'';
+
+                    $query .=" GROUP BY usuario.usu_id DESC";
+
     $peticion = $this->SelectAll($query);
     return $peticion;
   }

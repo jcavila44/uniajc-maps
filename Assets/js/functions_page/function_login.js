@@ -58,7 +58,7 @@ const onClickForgotPassword = () => {
           location.reload();
 
         } else if (objData.status === "error") {
-          message("Ocurrió un error inesperado:" + objData.message + " , por favor vuelva a intentar", "error");
+          message("Ocurrió un error inesperado:" + objData.msg + " , por favor vuelva a intentar", "error");
         }
       },
       error: (error) => {

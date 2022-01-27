@@ -5,6 +5,7 @@ require_once('Models/LoginModel.php');
 require_once('Models/StartModel.php');
 require_once('Models/GestorUsuariosModel.php');
 require_once('Models/GestorMapasModel.php');
+require_once('Models/GestorMapasUsuarioModel.php');
 require_once('Models/GestorTokenModel.php');
 
 class Facade
@@ -22,15 +23,16 @@ class Facade
     $this->HomeModel = new HomeModel();
     $this->GestorUsuariosModel = new GestorUsuariosModel();
     $this->GestorMapasModel = new GestorMapasModel();
+    $this->GestorMapasUsuarioModel = new GestorMapasUsuarioModel();
     $this->GestorTokenModel = new GestorTokenModel();
     $this->StartModel = new StartModel();
     $this->LoginModel = new LoginModel();
     $this->views = new Views();
   }
 
-  public function obtenerUsuarios()
+  public function obtenerUsuarios(bool $withOutAdmins = False)
   {
-    return $this->GestorUsuariosModel->obtenerUsuariosModel();
+    return $this->GestorUsuariosModel->obtenerUsuariosModel($withOutAdmins);
   }
 
   public function getRoles()
@@ -93,14 +95,29 @@ class Facade
     return $this->GestorMapasModel->guardarMapa($nombreMapa, $descripcionMapa, $ruta);
   }
 
+  public function guardarMapaUsuario(int $mapaId, Array $usuId )
+  {
+    return $this->GestorMapasUsuarioModel->addRelationMapaUser($mapaId, $usuId);
+  }
+
+  public function EliminarMapaUsuario(int $mapaId )
+  {
+    return $this->GestorMapasUsuarioModel->deleteRelationMapaUser($mapaId);
+  }
+
+  public function obtenerRelacionMapaUsuario(int $mapaId)
+  {
+    return $this->GestorMapasUsuarioModel->getRelationMapaUser($mapaId);
+  }
+
   public function guardarMapaCapa(int $idMapa, int $idCapa)
   {
     return $this->GestorMapasModel->guardarMapaCapa($idMapa, $idCapa);
   }
 
-  public function obtenerMapas()
+  public function obtenerMapas(bool $Is_Admin = true, int $user_id = null)
   {
-    return $this->GestorMapasModel->obtenerMapasModel();
+    return $this->GestorMapasModel->obtenerMapasModel($Is_Admin, $user_id );
   }
 
   public function getDataMapa(int $idMapa)

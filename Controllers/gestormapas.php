@@ -41,8 +41,15 @@ class GestorMapas extends Facade
 	public function getAllMapas()
 	{
 		if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-
-			$arrData = $this->obtenerMapas();
+			if($_SESSION['rol_id']!= 1){
+				$Is_Admin = FALSE; 
+				$user_id= $_SESSION['idusuario'];
+			}else{
+				$Is_Admin = true;
+				$user_id= null;
+			}
+			
+			$arrData = $this->obtenerMapas($Is_Admin, $user_id);
 			$arrRespuesta = array('status' => 'success', 'data' => $arrData);
 		} else {
 			$arrRespuesta = array('status' => 'error', 'msg' => 'La peticion HTTP, no corresponde al método');
@@ -95,7 +102,7 @@ class GestorMapas extends Facade
 									$mapaSave = $this->guardarMapaController($nombreMapa, $descripcionMapa, $nombreFolder . 'index.html');
 	
 									if ($mapaSave != false) {
-										$arrRespuesta = array('status' => 'success', 'msg' => 'Se guardó el mapa correctemente');
+										$arrRespuesta = array('status' => 'success', 'msg' => 'Se guardó el mapa correctemente', 'idRegistered' => $mapaSave);
 									} else {
 										$arrRespuesta = array('status' => 'error', 'msg' => 'Ocurrió un error en la inserción, por favor validar de nuevo');
 									}
@@ -119,6 +126,39 @@ class GestorMapas extends Facade
 
 		echo json_encode($arrRespuesta, JSON_UNESCAPED_UNICODE);
 		die();
+	}
+
+	public function addRelationMapaUser()
+	{
+		if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
+			if(isset($_POST['FirstDeleteRelation'])){
+				$peticion = $this->EliminarMapaUsuario($_POST['mapaId']);
+				($peticion != false) ? $arrRespuesta = array('status' => 'success', 'msg' => 'Se editó el mapa correctemente') : false;
+			}
+			if(isset($_POST['usuId'])){
+				$peticion = $this->guardarMapaUsuario($_POST['mapaId'], json_decode($_POST['usuId']));
+				($peticion != false) ? $arrRespuesta = array('status' => 'success', 'msg' => 'Se editó el mapa correctemente') : false;
+			}
+			echo json_encode($arrRespuesta, JSON_UNESCAPED_UNICODE);
+		} else {
+			$arrRespuesta = array('status' => 'error', 'msg' => 'La peticion HTTP, no corresponde al método.');
+			echo json_encode($arrRespuesta, JSON_UNESCAPED_UNICODE);
+		}
+	}
+
+	public function GetRelationMapaUser()
+	{
+		if ($_SERVER['REQUEST_METHOD'] == 'GET') {
+			$peticion = $this->obtenerRelacionMapaUsuario($_GET['mapaId']);
+			$arrData = $this->obtenerUsuarios(True);
+
+			$arrRespuesta = array('status' => 'success', 'data' => $peticion, 'allUsers' => $arrData );
+			echo json_encode($arrRespuesta, JSON_UNESCAPED_UNICODE);
+		} else {
+			$arrRespuesta = array('status' => 'error', 'msg' => 'La peticion HTTP, no corresponde al método.');
+			echo json_encode($arrRespuesta, JSON_UNESCAPED_UNICODE);
+		}
 	}
 
 	public function addMapa2()
@@ -397,9 +437,9 @@ class GestorMapas extends Facade
 					}
 				}
 			}
-
+			
 			$peticion = $this->editarMapaController($mapaId, $nombreMapa, $descripcionMapa, $mapaRuta);
-
+			
 			if ($peticion > 0) {
 				$arrRespuesta = array('status' => 'success', 'msg' => 'Mapa actualizado correctamente');
 			} else {
