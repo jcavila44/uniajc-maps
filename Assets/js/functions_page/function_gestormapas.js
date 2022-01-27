@@ -19,19 +19,22 @@ const getAllMaps = () => {
 
       if (objData.status === "success") {
 
+
+        const rolId = document.getElementById('rol_id').value;
+
         let htmlTable = `
             <thead>
               <tr>
                 <th>#</th>
                 <th>Nombre</th>
                 <th>Descripción</th>
-                <th>Estado</th>
+                ${(rolId == 1) ? `<th>Estado</th>` : ''}
                 <th>Acciones</th>
               </tr>
             </thead>
             <tbody>
         `;
-        const rolId = document.getElementById('rol_id').value;
+
 
         objData.data.forEach((mapaProp, key) => {
 
@@ -48,20 +51,21 @@ const getAllMaps = () => {
               <td> ${key} </td>
               <td> ${wordToCamelCase(mapaProp.mapa_nombre)} </td>
               <td> ${firstLetterUppercase(mapaProp.mapa_descripcion)} </td>
-              <td class="text-center"> <span class="badge pr-4 pl-4 pt-2 pb-2 badge-${(mapaProp.est_id == 9) ? 'success' : 'secondary'}">${(mapaProp.est_id == 9) ? 'Activo' : 'Inactivo'}</span> </td>
+              ${(rolId == 1) ? `<td class="text-center"> <span class="badge pr-4 pl-4 pt-2 pb-2 badge-${(mapaProp.est_id == 9) ? 'success' : 'secondary'}">${(mapaProp.est_id == 9) ? 'Activo' : 'Inactivo'}</span> </td>` : ''}
               <td> 
                 <div class="dropdown">
                   <button class="btn btn-outline-primary dropdown-toggle w-100" id="dropdownMenu2" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Gestionar</button>
                   <div class="dropdown-menu w-100" aria-labelledby="dropdownMenu2" x-placement="bottom-start" style="position: absolute; transform: translate3d(0px, 34px, 0px); top: 0px; left: 0px; will-change: transform;">
                   <button onclick='verMapa(${jsonInfo});' class="dropdown-item" type="button">Ver <i class="fa fa-eye fa-lg ml-2 text-dark"></i> </button>
                   `;
-                  if(rolId==1){
 
-                    htmlTable += `  
+          if (rolId == 1 || rolId == 2) {
+
+            htmlTable += `  
                     <button onclick='editarMapa(${jsonInfo});' class="dropdown-item" type="button">Editar <i class="icon-settings fa-lg ml-2 text-dark"></i> </button>
-                    ${btnActualizarOEliminar}
+                    ${(rolId == 1) ? btnActualizarOEliminar : ''}
                     `;
-                  }
+          }
 
           htmlTable += `
                   </div>
@@ -123,7 +127,7 @@ const AddMapas = () => {
                         <div class="input-group">
                         
                         <select id="UserList" data-size="5" data-live-search="true" multiple style="width: 100%">
-                        <option disabled>Choose...</option>`;
+                        <option disabled>Seleccione...</option>`;
 
       objData.data.forEach((User) => {
 
@@ -148,8 +152,10 @@ const AddMapas = () => {
         showCancelButton: false,
         showConfirmButton: false,
         showCloseButton: true,
+        didOpen() {
+          refrescarSelect("#UserList", "Seleccione los usuarios...");
+        }
       });
-      $('#UserList').selectpicker();
 
     }
   });
@@ -254,39 +260,39 @@ const verMapa = (allDataMapa) => {
 
   const { est_id, mapa_descripcion, mapa_id, mapa_nombre, mapa_ruta } = allDataMapa;
 
-  $.ajax({
-    url: base_url + 'gestormapas/getDataMapaController',
-    type: "POST",
-    data: { mapa: mapa_id },
-    dataType: "json",
-    beforeSend: () => { overlay(true) },
-    success: (objData) => {
-      overlay(false);
+  // $.ajax({
+  //   url: base_url + 'gestormapas/getDataMapaController',
+  //   type: "POST",
+  //   data: { mapa: mapa_id },
+  //   dataType: "json",
+  //   beforeSend: () => { overlay(true) },
+  //   success: (objData) => {
+  //     overlay(false);
 
-      if (objData.status === "success") {
+  //     if (objData.status === "success") {
 
-        Swal.fire({
-          title: `Mapa ${wordToCamelCase(mapa_nombre)}`,
-          html: `
-            <div id="map" class="w-100">
-              <iframe frameborder="0" height="500" width="100%" scrolling="no" src="${mapa_ruta}">
-              </iframe>
-            </div>
+  Swal.fire({
+    title: `Mapa ${wordToCamelCase(mapa_nombre)}`,
+    html: `
+        <div id="map" class="w-100">
+          <iframe frameborder="0" height="500" width="100%" scrolling="no" src="${mapa_ruta}">
+          </iframe>
+        </div>
           `,
-          showCancelButton: false,
-          showConfirmButton: false,
-          showCloseButton: true,
-          width: '100%',
-        });
-
-      } else {
-        message("Ocurrió un error inesperado, por favor vuelva a intentar", "warning");
-      }
-    },
-    error: () => {
-      message("Ocurrió un error en el consumo, por favor revisar los datos enviados", "error");
-    }
+    showCancelButton: false,
+    showConfirmButton: false,
+    showCloseButton: true,
+    width: '100%',
   });
+
+  //     } else {
+  //       message("Ocurrió un error inesperado, por favor vuelva a intentar", "warning");
+  //     }
+  //   },
+  //   error: () => {
+  //     message("Ocurrió un error en el consumo, por favor revisar los datos enviados", "error");
+  //   }
+  // });
 
 
 }
@@ -316,67 +322,27 @@ const onSubmitFormularioAgregarMapa = () => {
       dataType: "json",
       beforeSend: () => { overlay(true) },
       success: function ({ status = null, msg = null, idRegistered = null, data = null }) {
-        if (status != "success") {
+        if (status !== "success") {
           message(msg, status);
-          Swal.fire({
-            icon: status,
-            html: `<h3>${msg}</h3>`,
-            showCloseButton: true,
-            showCancelButton: false,
-            cancelButtonText: "Cerrar",
-            showConfirmButton: false,
-          }).then(() => {
-            if (status === "success") {
-              setTimeout(() => { getAllMaps() }, 300);
-            }
-          });
         } else {
-          $('#UserList').on('hidden.bs.select', function (e) {
 
-            let usuarios = [];
+          if (document.getElementById("UserList").selectedOptions.length == 0) {
 
-            $.each(e.target.selectedOptions, function (index, obj) {
-              usuarios[index] = obj.value;
-            });
+            addOrRemoveRelationMapaUser(idRegistered);
 
-            let formData1 = new FormData();
-            formData1.append("mapaId", idRegistered);
-            formData1.append("usuId", JSON.stringify(usuarios));
+          } else {
 
+            // $('#UserList').on('hidden.bs.select', function (e) {
+            let usuarios = $('#UserList').val();
 
-            $.ajax({
-              type: 'POST',
-              url: base_url + 'gestormapas/addRelationMapaUser',
-              data: formData1,
-              cache: false,
-              contentType: false,
-              processData: false,
-              method: 'POST',
-              async: false,
-              enctype: 'multi part/form-data',
-              dataType: "json",
-              beforeSend: () => { overlay(true) },
-              success: function ({ status = null, msg = null, peticion = null }) {
-                message(msg, status);
-                Swal.fire({
-                  icon: status,
-                  html: `<h3>${msg}</h3>`,
-                  showCloseButton: true,
-                  showCancelButton: false,
-                  cancelButtonText: "Cerrar",
-                  showConfirmButton: false,
-                }).then(() => {
-                  if (status === "success") {
-                    setTimeout(() => { getAllMaps() }, 300);
-                  }
-                });
-              },
-              error: (err) => {
-                message("Ocurrió un error, por favor revisar los datos enviados", "error");
-              }
-            });
+            //   $.each(e.target.selectedOptions, function (index, obj) {
+            //     usuarios[index] = obj.value;
+            //   });
+            addOrRemoveRelationMapaUser(idRegistered, 'True', usuarios);
 
-          });
+            // });
+
+          }
 
         }
       }
@@ -406,7 +372,7 @@ const editarMapa = (allDataMapa) => {
     beforeSend: () => { overlay(true) },
     success: (objData) => {
       const { mapa_descripcion, mapa_id, mapa_nombre, mapa_ruta } = allDataMapa;
-
+      const rolId = document.getElementById('rol_id').value;
 
 
       let htmlModal = `
@@ -427,26 +393,49 @@ const editarMapa = (allDataMapa) => {
                 <label for="name">${asteriskRequired}Descripción del mapa</label>
                 <textarea value="${mapa_descripcion}" style="resize: none;" class="form-control" id="descripcionMapa" name="descripcionMapa" rows="2" placeholder="Descripción del mapa">${mapa_descripcion}</textarea>
               </div>
-              <div class="col-md-12 mb-2">
-              <select id="UserListEdit" data-size="5" data-live-search="true" multiple style="width: 100%">
-              <option disabled>Elegir Usuarios...</option>`;
+              <div class="col-md-12 mb-2">`;
 
-      objData.allUsers.forEach((UserAll) => {
-        if (objData.data.length != 0) {
-          objData.data.forEach((UserSelected) => {
-            if (UserSelected.usu_id == UserAll.usu_id) {
-              htmlModal += `<option selected value="${UserAll.usu_id}" dataName="${UserAll.usu_id}">${UserAll.usu_id}</option>`
-            } else {
-              htmlModal += `<option value="${UserAll.usu_id}" dataName="${UserAll.usu_id}">${UserAll.usu_id}</option>`
-            }
+      if (rolId == 1) {
+        htmlModal += `
+          <select id="UserListEdit" data-size="5" data-live-search="true" multiple style="width: 100%">
+        `;
 
-          })
-        } else {
-          htmlModal += `<option value="${UserAll.usu_id}" dataName="${UserAll.usu_id}">${UserAll.usu_id}</option>`
-        }
-      });
 
-      htmlModal += `</select>
+        let agregadosAlSelect = [];
+
+        objData.allUsers.forEach((UserAll) => {
+          htmlModal += `<option value="${UserAll.usu_id}" dataName="${UserAll.usu_nombre}">${UserAll.usu_nombre}</option>`
+        });
+
+        // debugger;
+
+        // objData.allUsers.forEach((UserAll) => {
+
+        //   if (objData.data.length != 0) {
+
+        //     objData.data.forEach((UserSelected) => {
+
+        //       if (!(JSON.stringify(agregadosAlSelect)).includes(UserAll.usu_id)) {
+        //         if (UserSelected.usu_id === UserAll.usu_id) {
+        //           htmlModal += `<option selected value="${UserAll.usu_id}" dataName="${UserAll.usu_nombre}">${UserAll.usu_nombre}</option>`
+        //           agregadosAlSelect.push(UserAll.usu_id);
+        //         } else {
+        //           htmlModal += `<option value="${UserAll.usu_id}" dataName="${UserAll.usu_nombre}">${UserAll.usu_nombre}</option>`
+        //         }
+        //       }
+
+        //     });
+
+        //   } else {
+        //     htmlModal += `<option value="${UserAll.usu_id}" dataName="${UserAll.usu_id}">${UserAll.usu_id}</option>`
+        //   }
+
+        // });
+
+        htmlModal += `</select>`;
+      }
+
+      htmlModal += `
               </div>
               <div class="col-md-12 mb-2">
                 <br>
@@ -465,12 +454,16 @@ const editarMapa = (allDataMapa) => {
         showConfirmButton: false,
         showCloseButton: true,
         didOpen() {
-          $('#UserListEdit').selectpicker({
-            placeholder: "Select User",
-            size: '5',
-            multipleSeparator: ', '
+
+          refrescarSelect("#UserListEdit");
+
+          let seleccionados = [];
+          objData.data.forEach((UserSelected) => {
+            seleccionados.push(UserSelected.usu_id);
           });
-          $('#UserListEdit').selectpicker("refresh");
+
+          setValueSelectPicker("#UserListEdit", seleccionados);
+          // $('#UserListEdit').selectpicker("refresh");
         }
       });
     },
@@ -481,6 +474,20 @@ const editarMapa = (allDataMapa) => {
 }
 
 
+const refrescarSelect = (selector, placeholder = 'Selecciona...') => {
+  $(selector).selectpicker({
+    title: placeholder,
+    placeholder: placeholder,
+    size: '10',
+    liveSearch: true,
+    width: '100%',
+    multipleSeparator: ', '
+  });
+
+  $(selector).selectpicker("refresh");
+}
+
+const setValueSelectPicker = (selector, values) => $(selector).val(values).selectpicker('refresh');
 
 const onSubmitFormularioEditarMapa = () => {
 
@@ -488,7 +495,7 @@ const onSubmitFormularioEditarMapa = () => {
     nombreMapa: $("#nombreMapa").val() || '',
     mapaZip: $("#mapaZip")[0].files[0] || null,
     descripcionMapa: $("#descripcionMapa").val() || '',
-    mapa: $("#mapa").val() || '',
+    mapa: $("#mapa_id").val() || '',
   };
 
   if (validarFormularioEditarMapa(dataForm)) {
@@ -510,8 +517,9 @@ const onSubmitFormularioEditarMapa = () => {
       beforeSend: () => { overlay(true) },
       success: function ({ status = null, msg = null, data = null }) {
 
-        if (status != "success") {
-          message(msg, status);
+        const rolId = document.getElementById('rol_id').value;
+
+        if (status !== "success") {
           Swal.fire({
             icon: status,
             html: `<h3>${msg}</h3>`,
@@ -519,29 +527,42 @@ const onSubmitFormularioEditarMapa = () => {
             showCancelButton: false,
             cancelButtonText: "Cerrar",
             showConfirmButton: false,
-          }).then(() => {
-            if (status === "success") {
-              setTimeout(() => { getAllMaps() }, 300);
-            }
           });
         } else {
-          if (document.getElementById("UserListEdit").selectedOptions.length == 0) {
 
-            addOrRemoveRelationMapaUser(idRegistered);
+          if (rolId === "1") {
+
+            if (document.getElementById("UserListEdit").selectedOptions.length == 0) {
+
+              addOrRemoveRelationMapaUser(idRegistered, null, null, true);
+
+            } else {
+
+              // $('#UserListEdit').on('hidden.bs.select', function (e) {
+              let usuarios = $('#UserListEdit').val();
+              // $.each(e.target.selectedOptions, function (index, obj) {
+              //   usuarios[index] = obj.value;
+              // });
+
+              addOrRemoveRelationMapaUser(idRegistered, 'True', usuarios, true);
+
+              // });
+            }
 
           } else {
 
-            $('#UserListEdit').on('hidden.bs.select', function (e) {
-              let usuarios = [];
-              $.each(e.target.selectedOptions, function (index, obj) {
-                usuarios[index] = obj.value;
-              });
-
-              addOrRemoveRelationMapaUser(idRegistered, 'True', usuarios);
-
+            Swal.fire({
+              icon: status,
+              html: `<h3>Mapa actualizado correctamente.</h3>`,
+              showCloseButton: true,
+              showCancelButton: false,
+              cancelButtonText: "Continuar",
+              showConfirmButton: false,
+            }).then((result) => {
+              setTimeout(() => { getAllMaps() }, 300);
             });
-          }
 
+          }
         }
       },
       error: () => {
@@ -555,10 +576,12 @@ const onSubmitFormularioEditarMapa = () => {
 
 }
 
-const addOrRemoveRelationMapaUser = (idRegistered, usu = null, usuarios = null) => {
+const addOrRemoveRelationMapaUser = (idRegistered, usu = null, usuarios = null, deleteAllRelation = false) => {
+
   let formData = new FormData();
+
   formData.append("mapaId", idRegistered);
-  formData.append("FirstDeleteRelation", 'TRUE');
+  (deleteAllRelation) && formData.append("FirstDeleteRelation", 'TRUE');
   (usu) && formData.append("usuId", JSON.stringify(usuarios));
 
   $.ajax({
@@ -574,10 +597,9 @@ const addOrRemoveRelationMapaUser = (idRegistered, usu = null, usuarios = null) 
     dataType: "json",
     beforeSend: () => { overlay(true) },
     success: function ({ status = null, msg = null, peticion = null }) {
-      message(msg, status);
       Swal.fire({
         icon: status,
-        html: `<h3>Se editó correctamente el mapa</h3>`,
+        html: `<h3>${msg}</h3>`,
         showCloseButton: true,
         showCancelButton: false,
         cancelButtonText: "Cerrar",

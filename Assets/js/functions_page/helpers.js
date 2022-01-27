@@ -68,13 +68,22 @@ const startTable = (idTabla) => {
 
 
 const wordToCamelCase = (str) => {
-  return str
-    .toLowerCase()
-    .split(' ')
-    .map(function (Word) {
-      return Word[0].toUpperCase() + Word.substr(1);
-    })
-    .join(' ');
+
+  let response = ``;
+
+  if (str !== '' || str !== null || str !== 'null' || str !== undefined || str !== 'undefined') {
+
+    response = str
+      .toLowerCase()
+      .split(' ')
+      .map(function (Word) {
+        return Word[0].toUpperCase() + Word.substr(1);
+      })
+      .join(' ');
+  }
+
+  return response;
+
 }
 
 const firstLetterUppercase = (data) => {

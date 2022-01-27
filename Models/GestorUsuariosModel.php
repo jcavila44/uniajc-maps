@@ -30,7 +30,7 @@ class GestorUsuariosModel extends MySQL
     parent::__construct();
   }
 
-  public function obtenerUsuariosModel( bool $withOutAdmins = False)
+  public function obtenerUsuariosModel(bool $withOutAdmins = False)
   {
     $query = "SELECT 
                     usuario.usu_id,
@@ -47,9 +47,9 @@ class GestorUsuariosModel extends MySQL
                     usuario.est_id = estado.estado_id AND 
                     usuario.rol_id = rol.rol_id";
 
-                    ($withOutAdmins)? $query .= " AND usuario.rol_id != 1":'';
+    ($withOutAdmins) ? $query .= " AND usuario.rol_id != 1" : '';
 
-                    $query .=" GROUP BY usuario.usu_id DESC";
+    $query .= " GROUP BY usuario.usu_id DESC";
 
     $peticion = $this->SelectAll($query);
     return $peticion;
@@ -194,6 +194,30 @@ class GestorUsuariosModel extends MySQL
     $arrInformacion = array(
       $this->strUsuPassword,
       $this->intUsuId,
+    );
+
+    $peticion = $this->Update($query, $arrInformacion);
+
+    if ($peticion > 0) {
+      $this->updateEstadoToken($this->intUsuId);
+    }
+
+    return $peticion;
+  }
+
+  private function updateEstadoToken($idUsuario)
+  {
+
+    $query = "UPDATE 
+                token
+              SET
+                token.est_id = ?
+              WHERE
+                token.usu_id = ?
+              ";
+    $arrInformacion = array(
+      14, //Token inhabilitado
+      $idUsuario,
     );
 
     $peticion = $this->Update($query, $arrInformacion);

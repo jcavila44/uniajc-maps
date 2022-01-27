@@ -232,7 +232,7 @@ function sessionEsValida($timeOut)
 
     $response = false;
 
-    $tiempoMaximoPermitido = 1200;
+    $tiempoMaximoPermitido = 1500;
     $tiempoInactivo = (isset($timeOut) && is_numeric($timeOut)) ? time() - $timeOut : $tiempoMaximoPermitido + 1;
 
     $response = ($tiempoInactivo > $tiempoMaximoPermitido) ? false : true;
