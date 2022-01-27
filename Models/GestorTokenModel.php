@@ -30,6 +30,7 @@ class GestorTokenModel extends MySQL
 
     public function saveTokenModel(String $token_fecha, String $token_vencido, String $token, int $usu_id)
     {
+        $this->updateEstadoToken($usu_id);
 
         $this->token_fecha = $token_fecha;
         $this->token_vencido = $token_vencido;
@@ -41,8 +42,10 @@ class GestorTokenModel extends MySQL
                       token_fecha, 
                       token_fecha_vencido, 
                       token,
-                      usu_id
+                      usu_id,
+                      est_id
                     ) VALUES (
+                      ?,
                       ?,
                       ?,
                       ?,
@@ -54,6 +57,7 @@ class GestorTokenModel extends MySQL
             $this->token_vencido,
             $this->token,
             $this->usu_id,
+            13
         );
 
 
@@ -69,17 +73,40 @@ class GestorTokenModel extends MySQL
         $dateNow =  date('Y-m-d H:i:s');
 
         $query = "SELECT 
-										token_fecha, 
-                                        token_fecha_vencido,
-                                        usu_id		
-							FROM 
-										token
-							WHERE 
-										token.token =  '$Token'  AND
-                                        token.token_fecha_vencido > '$dateNow'
+                            token_fecha, 
+                            token_fecha_vencido,
+                            usu_id		
+                FROM 
+                            token
+                WHERE 
+                            token.token =  '$Token'  AND
+                            token.token_fecha_vencido > '$dateNow' AND 
+                            token.est_id = 13
                 ";
 
         $peticion = $this->Select($query);
         return $peticion;
     }
+
+
+    private function updateEstadoToken($idUsuario)
+    {
+  
+      $query = "UPDATE 
+                  token
+                SET
+                  token.est_id = ?
+                WHERE
+                  token.usu_id = ?
+                ";
+      $arrInformacion = array(
+        14, //Token inhabilitado
+        $idUsuario,
+      );
+  
+      $peticion = $this->Update($query, $arrInformacion);
+  
+      return $peticion;
+    }
+
 }

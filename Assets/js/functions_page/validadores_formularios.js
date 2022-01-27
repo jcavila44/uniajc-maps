@@ -63,7 +63,7 @@ const validarFormularioAgregarMapa = (dataForm) => {
 
   let responses = [];
 
-  (!exprRegSoloLetras.test(nombreMapa.trim())) && (responses.push(false));
+  (!exprRegLetrasyAcentos.test(nombreMapa.trim())) && (responses.push(false));
   (mapaZip?.type !== "application/x-zip-compressed") && (responses.push(false));
   (!exprRegLetrasyAcentos.test(descripcionMapa.trim())) && (responses.push(false));
 
@@ -83,7 +83,7 @@ const validarFormularioEditarMapa = (dataForm) => {
 
   let responses = [];
 
-  (!exprRegSoloLetras.test(nombreMapa.trim())) && (responses.push(false));
+  (!exprRegLetrasyAcentos.test(nombreMapa.trim())) && (responses.push(false));
   (mapaZip !== null && mapaZip?.type !== "application/x-zip-compressed") && (responses.push(false));
   (!exprRegLetrasyAcentos.test(descripcionMapa.trim())) && (responses.push(false));
   (!exprRegNumerosPositivos.test(mapa.trim())) && (responses.push(false));

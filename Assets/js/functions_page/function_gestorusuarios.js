@@ -145,10 +145,10 @@ const onClickAgregarUsuarios = () => {
       rolUsuario: $("#rolUsuario").val() || '',
     }
 
-    if (result.value) {
-
+    if (result.value && validarFormularioAgregarUsuarios(allData)) {
       guardarInformacionUsuario(allData);
-
+    } else {
+      alertaFormularioInvalido();
     }
 
 
@@ -181,51 +181,45 @@ const consultarRolesUsuarios = () => {
 
 const guardarInformacionUsuario = ({ nombreUsuario, cedulaUsuario, CorreoUsuario, rolUsuario }) => {
 
+  setTimeout(() => { overlay(true) }, 500);
 
   const dataForm = {
     nombreUsuario: String(wordToCamelCase(nombreUsuario)),
     cedulaUsuario: String(cedulaUsuario),
-    CorreoUsuario: String(CorreoUsuario.toLowerCase()),
+    CorreoUsuario: String(CorreoUsuario),
     rolUsuario: parseInt(rolUsuario),
   }
 
-  if (validarFormularioAgregarUsuarios(dataForm)) {
+  $.ajax({
+    url: base_url + 'gestorusuarios/saveInfoUserController',
+    type: "POST",
+    data: dataForm,
+    dataType: "json",
+    success: (objData) => {
+      overlay(false);
 
-    $.ajax({
-      async: true,
-      url: base_url + 'gestorusuarios/saveInfoUserController',
-      type: "POST",
-      data: dataForm,
-      dataType: "json",
-      beforeSend: () => { overlay(true) },
-      success: (objData) => {
-        overlay(false);
+      if (objData.status === "success") {
+        Swal.fire({
+          icon: "success",
+          html: `<h3>Usuario guardado correctamente. <br> Recuerde que la contraseña será enviada al correo correspondiente.</h3>`,
+          showConfirmButton: true,
+          confirmButtonText: 'Continuar',
+          confirmButtonColor: '#0069d9',
+          showCancelButton: false,
+        }).then((result) => {
+          setTimeout(() => { getAllUsers() }, 300);
+        })
 
-        if (objData.status === "success") {
-          Swal.fire({
-            icon: "success",
-            html: `<h3>Usuario guardado correctamente. <br> Recuerde que la contraseña será enviada al correo correspondiente.</h3>`,
-            showConfirmButton: true,
-            confirmButtonText: 'Continuar',
-            confirmButtonColor: '#0069d9',
-            showCancelButton: false,
-          }).then((result) => {
-            setTimeout(() => { getAllUsers() }, 300);
-          })
-
-        } else {
-          message(objData.msg, "warning");
-        }
-
-      },
-      error: (error) => {
-        message("Ocurrió un error en la inserción, por favor revisar los datos enviados", "error");
+      } else {
+        message(objData.msg, "warning");
       }
-    });
 
-  } else {
-    alertaFormularioInvalido();
-  }
+    },
+    error: (error) => {
+      message("Ocurrió un error en la inserción, por favor revisar los datos enviados", "error");
+    }
+  });
+
 
 }
 
@@ -368,10 +362,10 @@ const onClickActualizarUsuario = ({ rol_descripcion, usu_cedula, usu_correo, usu
   }).then((result) => {
 
     const allData = {
-      nombreUsuario: $("#nombreUsuario").val(),
-      cedulaUsuario: $("#cedulaUsuario").val(),
-      CorreoUsuario: $("#CorreoUsuario").val(),
-      rolUsuario: $("#rolUsuario").val(),
+      nombreUsuario: $("#nombreUsuario").val() || '',
+      cedulaUsuario: $("#cedulaUsuario").val() || '',
+      CorreoUsuario: $("#CorreoUsuario").val() || '',
+      rolUsuario: $("#rolUsuario").val() || '',
       usu_id
     }
 
@@ -400,7 +394,7 @@ const actualizarInformacionUsuario = ({ nombreUsuario, cedulaUsuario, CorreoUsua
     data: {
       nombreUsuario: String(wordToCamelCase(nombreUsuario)),
       cedulaUsuario: String(cedulaUsuario),
-      CorreoUsuario: String(CorreoUsuario.toLowerCase()),
+      CorreoUsuario: String(CorreoUsuario),
       rolUsuario: parseInt(rolUsuario),
       usu_id: parseInt(usu_id),
     },
