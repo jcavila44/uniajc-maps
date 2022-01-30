@@ -20,7 +20,8 @@ class GestorUsuarios extends Facade
 	public function __construct()
 	{
 		session_start();
-		if (!isset($_SESSION['login']) || !sessionEsValida($_SESSION['timeout'])) {
+
+		if (validarSesionPorPeticion($_SESSION, $_POST, $_GET, $_FILES) || $_SESSION['rol_id'] !== '1') {
 			header('Location: ' . base_url() . "/Logout");
 		}
 		parent::__construct();
