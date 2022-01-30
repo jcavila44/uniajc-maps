@@ -50,19 +50,7 @@ class GestorUsuarios extends Facade
 		echo json_encode($arrRespuesta, JSON_UNESCAPED_UNICODE);
 		die();
 	}
-	public function obtenerUsuariosControllerMap()
-	{
-		if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-
-			$arrData = $this->obtenerUsuarios(True);
-			$arrRespuesta = array('status' => 'success', 'data' => $arrData);
-		} else {
-			$arrRespuesta = array('status' => 'error', 'msg' => 'La peticion HTTP, no corresponde al método');
-		}
-		echo json_encode($arrRespuesta, JSON_UNESCAPED_UNICODE);
-		die();
-	}
-
+	
 	//Metodo para obtener todos los usuarios
 	public function getRolesController()
 	{
