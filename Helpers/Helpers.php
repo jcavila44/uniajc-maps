@@ -239,3 +239,15 @@ function sessionEsValida($timeOut)
 
     return $response;
 }
+
+
+function validarSesionPorPeticion($sesion, $post, $get, $files)
+{
+    $response = false;
+
+    if (!isset($sesion['login']) || (!sessionEsValida($sesion['timeout']) && (!isset($post) || !isset($get) || !isset($files)))) {
+        $response = true;
+    }
+
+    return $response;
+}

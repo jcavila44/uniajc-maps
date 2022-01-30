@@ -21,7 +21,7 @@ class Home extends Facade
 	{
 		session_start();
 
-		if (!isset($_SESSION['login']) || !sessionEsValida($_SESSION['timeout'])) {
+		if (validarSesionPorPeticion($_SESSION, $_POST, $_GET, $_FILES)) {
 			header('Location: ' . base_url() . "/Logout");
 		}
 

@@ -20,7 +20,7 @@ class GestorMapas extends Facade
 	public function __construct()
 	{
 		session_start();
-		if (!isset($_SESSION['login']) || !sessionEsValida($_SESSION['timeout'])) {
+		if (validarSesionPorPeticion($_SESSION, $_POST, $_GET, $_FILES)) {
 			header('Location: ' . base_url() . "/Logout");
 		}
 
@@ -41,14 +41,14 @@ class GestorMapas extends Facade
 	public function getAllMapas()
 	{
 		if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-			if($_SESSION['rol_id']!= 1){
-				$Is_Admin = FALSE; 
-				$user_id= $_SESSION['idusuario'];
-			}else{
+			if ($_SESSION['rol_id'] != 1) {
+				$Is_Admin = FALSE;
+				$user_id = $_SESSION['idusuario'];
+			} else {
 				$Is_Admin = true;
-				$user_id= null;
+				$user_id = null;
 			}
-			
+
 			$arrData = $this->obtenerMapas($Is_Admin, $user_id);
 			$arrRespuesta = array('status' => 'success', 'data' => $arrData);
 		} else {
@@ -96,11 +96,11 @@ class GestorMapas extends Facade
 							if ($validarEstructuraZip) {
 								$archivoExtraido = $zip->extractTo($nombreFolder);
 								$zip->close();
-	
+
 								if ($archivoExtraido) {
-	
+
 									$mapaSave = $this->guardarMapaController($nombreMapa, $descripcionMapa, $nombreFolder . 'index.html');
-	
+
 									if ($mapaSave != false) {
 										$arrRespuesta = array('status' => 'success', 'msg' => 'Se guardó el mapa correctemente', 'idRegistered' => $mapaSave);
 									} else {
@@ -134,16 +134,15 @@ class GestorMapas extends Facade
 
 			$arrRespuesta = array('status' => 'success', 'msg' => 'Operación exitosa.');
 
-			if(isset($_POST['FirstDeleteRelation'])){
+			if (isset($_POST['FirstDeleteRelation'])) {
 				$peticion = $this->EliminarMapaUsuario($_POST['mapaId']);
 				$arrRespuesta = ($peticion != false) ? array('status' => 'success', 'msg' => 'Operacion exitosa.') : array('status' => 'error', 'msg' => 'Operacion fallida.');
 			}
 
-			if(isset($_POST['usuId'])){
+			if (isset($_POST['usuId'])) {
 				$peticion = $this->guardarMapaUsuario($_POST['mapaId'], json_decode($_POST['usuId']));
-				$arrRespuesta =($peticion != false) ?  array('status' => 'success', 'msg' => 'Operacion exitosa.') : array('status' => 'error', 'msg' => 'Operacion fallida.');
+				$arrRespuesta = ($peticion != false) ?  array('status' => 'success', 'msg' => 'Operacion exitosa.') : array('status' => 'error', 'msg' => 'Operacion fallida.');
 			}
-
 		} else {
 			$arrRespuesta = array('status' => 'error', 'msg' => 'La peticion HTTP, no corresponde al método.');
 		}
@@ -157,7 +156,7 @@ class GestorMapas extends Facade
 			$peticion = $this->obtenerRelacionMapaUsuario($_GET['mapaId']);
 			$arrData = $this->obtenerUsuarios(True);
 
-			$arrRespuesta = array('status' => 'success', 'data' => $peticion, 'allUsers' => $arrData );
+			$arrRespuesta = array('status' => 'success', 'data' => $peticion, 'allUsers' => $arrData);
 			echo json_encode($arrRespuesta, JSON_UNESCAPED_UNICODE);
 		} else {
 			$arrRespuesta = array('status' => 'error', 'msg' => 'La peticion HTTP, no corresponde al método.');
@@ -441,9 +440,9 @@ class GestorMapas extends Facade
 					}
 				}
 			}
-			
+
 			$peticion = $this->editarMapaController($mapaId, $nombreMapa, $descripcionMapa, $mapaRuta);
-			
+
 			if ($peticion > 0) {
 				$arrRespuesta = array('status' => 'success', 'msg' => 'Mapa actualizado correctamente');
 			} else {
