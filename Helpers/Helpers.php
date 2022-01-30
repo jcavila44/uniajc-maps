@@ -251,3 +251,51 @@ function validarSesionPorPeticion($sesion, $post, $get, $files)
 
     return $response;
 }
+
+
+function showRolToHome($session)
+{
+    $response = '';
+
+    switch ($session['rol_id']) {
+        case '1':
+            $response =  '
+                <h4>
+                    Bienvenido <br>
+                    ' . $session['nombre'] . ' <br>
+                    <span class="badge badge-pill badge-dark">
+                        <small style="font-weight: 500;">Eres un administrador</small>
+                    </span>
+                </h4>
+            ';
+            break;
+        case '2':
+            $response =  '
+                <h4>
+                    Bienvenido <br>
+                    ' . $session['nombre'] . ' <br>
+                    <span class="badge badge-pill badge-primary">
+                        <small style="font-weight: 500;">Eres un investigador</small>
+                    </span>
+                </h4>
+            ';
+            break;
+        case '3':
+            $response =  '
+                <h4>
+                    Bienvenido <br>
+                    ' . $session['nombre'] . ' <br>
+                    <span class="badge badge-pill badge-warning">
+                        <small style="font-weight: 500;">Eres un invitado</small>
+                    </span>
+                </h4>
+            ';
+            break;
+
+        default:
+            $response = '';
+            break;
+    }
+
+    return $response;
+}
