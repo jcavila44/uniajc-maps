@@ -17,7 +17,7 @@
                                         <i class="icon-lock"></i>
                                     </span>
                                 </div>
-                                <input id="password" name="password" class="form-control" type="password" placeholder="Contraseña" value="1144211277">
+                                <input id="password" name="password" class="form-control" type="password" placeholder="Contraseña">
                                 <input id="usu_id" name="usu_id" class="form-control" type="hidden" placeholder="Contraseña" value="<?php echo $data['info_token']['usu_id'] ?>">
                                 <div class="input-group-append">
 
@@ -34,7 +34,7 @@
                                         <i class="icon-lock"></i>
                                     </span>
                                 </div>
-                                <input id="passwordConfirmation" name="passwordConfirmation" class="form-control" type="password" placeholder="Contraseña" value="1144211277">
+                                <input id="passwordConfirmation" name="passwordConfirmation" class="form-control" type="password" placeholder="Contraseña">
                                 <div class="input-group-append">
 
                                     <span onclick="onClickViewPassword('passwordConfirmation', 'passwordConfirmationIcon')" class="input-group-text cursor-pointer">

@@ -9,6 +9,7 @@
       <div class="card p-4" style="max-height: 400px ; overflow: auto;">
         <table id="tableGestorMapas" class="table table-bordered table-hover"></table>
         <input type="hidden" id="rol_id" name="rol_id" value="<?php echo $_SESSION['rol_id'] ?>">
+        <input type="hidden" id="usu_id" name="usu_id" value="<?php echo $_SESSION['idusuario'] ?>">
       </div>
     </div>
 

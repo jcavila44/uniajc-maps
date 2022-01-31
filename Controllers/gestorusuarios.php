@@ -50,7 +50,7 @@ class GestorUsuarios extends Facade
 		echo json_encode($arrRespuesta, JSON_UNESCAPED_UNICODE);
 		die();
 	}
-	
+
 	//Metodo para obtener todos los usuarios
 	public function getRolesController()
 	{
@@ -82,23 +82,29 @@ class GestorUsuarios extends Facade
 				!empty($rolUsuario) && $rolUsuario !== null
 			) {
 
-				$peticion = $this->saveUsuario($nombreUsuario, $cedulaUsuario, $CorreoUsuario, $rolUsuario);
+				$ObtenerUsuario = $this->consultarUsuarioRecoverPassword($CorreoUsuario);
+				if (!$ObtenerUsuario) {
 
-				if ($peticion > 0) {
+					$peticion = $this->saveUsuario($nombreUsuario, $cedulaUsuario, $CorreoUsuario, $rolUsuario);
 
-					$body = '
-						Hola ' . $nombreUsuario . ' <br> 
-						Has sido añadido al sistema de UNIAJC MAPS y tus credenciales serán las siguientes: <br>
-						<b>Usuario</b>: ' . $CorreoUsuario . ' <br>
-						<b>Contraseña</b>: Su # de Indentificación. <br> <br>
-						Gracias por su atención.
-					';
+					if ($peticion > 0) {
 
-					$correoEnviado = sendOwnEmail($CorreoUsuario, 'Usuario nuevo UNIAJC MAPS', $body);
+						$body = utf8_decode('
+							Hola ' . $nombreUsuario . ' <br> 
+							Has sido añadido al sistema de UNIAJC MAPS y tus credenciales serán las siguientes: <br>
+							<b>Usuario</b>: ' . $CorreoUsuario . ' <br>
+							<b>Contraseña</b>: Su # de Indentificación. <br> <br>
+							Gracias por su atención.
+						');
 
-					$arrRespuesta = ($correoEnviado['status'] == "success") ? $correoEnviado : array('status' => 'warning', 'msg' => 'Usuario guardado correctamente pero el correo no se logró enviar.');
+						$correoEnviado = sendOwnEmail($CorreoUsuario, 'Usuario nuevo UNIAJC MAPS', $body);
+
+						$arrRespuesta = ($correoEnviado['status'] == "success") ? $correoEnviado : array('status' => 'warning', 'msg' => 'Usuario guardado correctamente pero el correo no se logró enviar.');
+					} else {
+						$arrRespuesta = array('status' => 'error', 'msg' => 'Usuario no se logró registrar.');
+					}
 				} else {
-					$arrRespuesta = array('status' => 'error', 'msg' => 'Usuario no se logró registrar.');
+					$arrRespuesta = array('status' => 'error', 'msg' => 'El usuario que trata ingresar ya existe.');
 				}
 			} else {
 				$arrRespuesta = array('status' => 'error', 'msg' => 'Los campos no pueden estar vacíos.');
