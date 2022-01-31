@@ -1,11 +1,11 @@
 <?php
 //============================================================+
 // Carpeta: Models
-// Nombre del archivo   : LoginModel.php
+// Nombre del archivo   : GestorUsuariosModel.php
 // Inicio       : 2021-09-11
 // Ultima actualizacion :
 //
-// Description : Modelo para manejar los datos y querys del modulo de Login
+// Description : Modelo para manejar los datos y querys del modulo de usuarios
 //
 // Author: Jose Carlos Avila Perea
 //
@@ -20,6 +20,7 @@ class GestorUsuariosModel extends MySQL
   private string $strUsuCedula;
   private string $strUsuNombre;
   private string $strUsuPassword;
+  private string $strSaltCrypt = "4c9458523191fcafdc35990b85ee868a";    //Codigo Un14Jc_M4p$* generado bajo el hash MD5 
   private int $intRolId;
   private int $intEstadoId;
   private int $intUsuId;
@@ -29,7 +30,7 @@ class GestorUsuariosModel extends MySQL
     parent::__construct();
   }
 
-  public function obtenerUsuariosModel()
+  public function obtenerUsuariosModel(bool $withOutAdmins = False)
   {
     $query = "SELECT 
                     usuario.usu_id,
@@ -44,9 +45,12 @@ class GestorUsuariosModel extends MySQL
                     rol
                   WHERE 
                     usuario.est_id = estado.estado_id AND 
-                    usuario.rol_id = rol.rol_id
-                  GROUP BY usuario.usu_id DESC
-    ";
+                    usuario.rol_id = rol.rol_id";
+
+    ($withOutAdmins) ? $query .= " AND usuario.rol_id != 1" : '';
+
+    $query .= " GROUP BY usuario.usu_id DESC";
+
     $peticion = $this->SelectAll($query);
     return $peticion;
   }
@@ -66,7 +70,7 @@ class GestorUsuariosModel extends MySQL
     $this->strUsuCorreo = $CorreoUsuario;
     $this->intRolId = $rolUsuario;
     $this->intEstadoId = 7;
-    $this->strUsuPassword = crypt($cedulaUsuario, '123');
+    $this->strUsuPassword = crypt($cedulaUsuario, $this->strSaltCrypt);
 
     $query = "INSERT INTO 
                   `usuario` 
@@ -121,6 +125,26 @@ class GestorUsuariosModel extends MySQL
     return $peticion;
   }
 
+  public function enableUsuarioModel(int $idUsuario)
+  {
+
+    $this->intEstadoId = 7;
+    $this->intUsuId = $idUsuario;
+
+    $query = "UPDATE 
+                  usuario 
+                 SET 
+                  est_id = ?
+                 WHERE 
+                  usuario.usu_id = ?
+                ";
+
+    $arrInformacion = array($this->intEstadoId, $this->intUsuId);
+    $peticion = $this->Update($query, $arrInformacion);
+
+    return $peticion;
+  }
+
   public function updateUsuarioModel(string $nombreUsuario, string $cedulaUsuario, string $CorreoUsuario, int $rolUsuario, int $usu_id)
   {
 
@@ -149,6 +173,52 @@ class GestorUsuariosModel extends MySQL
       $this->intUsuId
     );
 
+
+    $peticion = $this->Update($query, $arrInformacion);
+
+    return $peticion;
+  }
+
+  public function updatePassword($usu_id, $password)
+  {
+    $this->intUsuId = $usu_id;
+    $this->strUsuPassword = $password;
+
+    $query = "UPDATE 
+                usuario
+              SET
+                usuario.usu_password = ?
+              WHERE
+              usuario.usu_id = ?
+              ";
+    $arrInformacion = array(
+      $this->strUsuPassword,
+      $this->intUsuId,
+    );
+
+    $peticion = $this->Update($query, $arrInformacion);
+
+    if ($peticion > 0) {
+      $this->updateEstadoToken($this->intUsuId);
+    }
+
+    return $peticion;
+  }
+
+  private function updateEstadoToken($idUsuario)
+  {
+
+    $query = "UPDATE 
+                token
+              SET
+                token.est_id = ?
+              WHERE
+                token.usu_id = ?
+              ";
+    $arrInformacion = array(
+      14, //Token inhabilitado
+      $idUsuario,
+    );
 
     $peticion = $this->Update($query, $arrInformacion);
 

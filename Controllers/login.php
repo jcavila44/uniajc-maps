@@ -14,13 +14,24 @@
 //				Institución Universitaria Antonio Jose Camacho
 //============================================================+
 
+
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
+require 'vendor/autoload.php';
+require_once('./Helpers/Helpers.php');
+
 class Login extends Facade
 {
 	public function __construct()
 	{
 		session_start();
-		if (isset($_SESSION['login'] )) {
+		if (isset($_SESSION['login']) || isset($_SESSION["LoginTime"])) {
 			header('Location: ' . base_url() . 'home');
+		} else {
+			if (isset($_SESSION['ForgotEmailSended']) && $_SESSION['ForgotEmailSended'] == 1) {
+				header('Location: ' . base_url() . 'login/emailSendForgotPassword?e=' . $_SESSION['emailUser']);
+			}
 		}
 		parent::__construct();
 	}
@@ -35,6 +46,35 @@ class Login extends Facade
 		$data['page_header'] = 0;
 
 		$this->views->getView($this, "login", $data);
+	}
+
+	public function forgotPassword()
+	{
+		session_unset();
+		session_destroy();
+		$data['page_id'] = 1;
+		$data['page_tag'] = 'Forgot Password';
+		$data['page_title'] = 'Forgot Password';
+		$data['page_name'] = 'Pagina principal';
+		$data['page_functions_js'] = 'function_login.js';
+		$data['page_header'] = 0;
+
+		$this->views->getView($this, "forgotPassword", $data);
+	}
+
+	public function emailSendForgotPassword()
+	{
+		$data['emailUser'] = $_GET['e'];
+		$data['page_id'] = 1;
+		$data['page_tag'] = 'Email Sended';
+		$data['page_title'] = 'Email Sended';
+		$data['page_name'] = 'Aviso de Email enviado';
+		$data['page_functions_js'] = 'function_login.js';
+		$data['page_header'] = 0;
+		$_SESSION['ForgotEmailSended'] = 0;
+
+
+		$this->views->getView($this, "emailSendForgotPassword", $data);
 	}
 
 	public function logout()
@@ -80,6 +120,8 @@ class Login extends Facade
 						$_SESSION['nombre'] = $ObtenerUsuario['usu_nombre'];
 						$_SESSION['cedula'] = $ObtenerUsuario['usu_cedula'];
 						$_SESSION['rol'] = $ObtenerUsuario['rol_descripcion'];
+						$_SESSION['rol_id'] = $ObtenerUsuario['rol_id'];
+						$_SESSION['timeout'] = time();
 						$arrRespuesta = array('status' => 'success', 'msg' => 'Inicio de sesión exitoso');
 					} else {
 						$arrRespuesta = array('status' => 'success', 'msg' => 'Usuario inhabilitado');
@@ -93,6 +135,70 @@ class Login extends Facade
 		} else {
 			$arrRespuesta = array('status' => 'error', 'msg' => 'La peticion HTTP, no corresponde al metodo');
 		}
+		echo json_encode($arrRespuesta, JSON_UNESCAPED_UNICODE);
+	}
+
+	public function recoverPassword()
+	{
+		if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+			$correo = $_POST['correo'];
+
+			$ObtenerUsuario = $this->consultarUsuarioRecoverPassword($correo);
+			if ($ObtenerUsuario && $correo == $ObtenerUsuario['usu_correo']) {
+
+				$data = generate_Token($correo);
+				$peticion = $this->saveTokenModel($data['dateNow'], $data['expDate'], $data['token'], $ObtenerUsuario['usu_id']);
+
+				if ($peticion > 0) {
+
+					$body = 'Hola ' . $correo . ' este es el link de recuperacion de tu contraseña <a href="' . base_url() . 'login/TokenValidation?token=' . $data['token'] . '" > Link de recuperacion </a> Tienes 30 minutos antes de que expire, es la oportunidad de recuperar contraseña.';
+					$_SESSION['ForgotEmailSended'] = 1;
+					$_SESSION['emailUser'] = $correo;
+					$correoEnviado = sendOwnEmail($correo, 'Recover password UNIAJC MAPS', $body);
+					$arrRespuesta = ($correoEnviado['status'] == "success") ? $correoEnviado : array('status' => 'error', 'msg' => 'El correo no se ha enviado correctamente');
+				} else {
+					$arrRespuesta = array('status' => 'error', 'msg' => 'El token no se logró guardar.');
+				}
+			} else {
+				$arrRespuesta = array('status' => 'error', 'msg' => 'El usuario no fue encontrado');
+			}
+		} else {
+			$arrRespuesta = array('status' => 'error', 'msg' => 'La peticion HTTP, no corresponde al metodo');
+		}
+		echo json_encode($arrRespuesta, JSON_UNESCAPED_UNICODE);
+	}
+
+	public function TokenValidation()
+	{
+		$data = array();
+		$data['page_tag'] = 'validToken';
+		$data['page_title'] = 'Recuperar Contraseña';
+		$data['page_name'] = 'ValidToken';
+		$data['page_functions_js'] = 'function_login.js';
+
+		$info_token = $this->consultarTokenRecoverPassword($_GET['token']);
+		if ($info_token) {
+			$data['info_token'] = $info_token;
+			$this->views->getView($this, "validTokenTrue", $data);
+		} else {
+			$this->views->getView($this, "validTokenFalse", $data);
+		}
+	}
+
+	public function saveRecoverPassword()
+	{
+		$password = crypt($_POST['password'], '123');
+		$usu_id = $_POST['usu_id'];
+
+		$info_save_password = $this->updatePassword($usu_id, $password);
+
+		if ($info_save_password) {
+			$arrRespuesta = array('status' => 'success', 'msg' => 'Se ha actualizado correctamente la contraseña');
+			$_SESSION["LoginTime"] = true;
+		} else {
+			$arrRespuesta = array('status' => 'error', 'msg' => 'La contraseña no se actualizó correctamente');
+		}
+
 		echo json_encode($arrRespuesta, JSON_UNESCAPED_UNICODE);
 	}
 }

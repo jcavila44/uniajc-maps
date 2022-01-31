@@ -14,12 +14,14 @@
 //				Institución Universitaria Antonio Jose Camacho
 //============================================================+
 
+
 class GestorUsuarios extends Facade
 {
 	public function __construct()
 	{
 		session_start();
-		if (!isset($_SESSION['login'])) {
+
+		if (validarSesionPorPeticion($_SESSION, $_POST, $_GET, $_FILES) || $_SESSION['rol_id'] !== '1') {
 			header('Location: ' . base_url() . "/Logout");
 		}
 		parent::__construct();
@@ -62,6 +64,7 @@ class GestorUsuarios extends Facade
 		echo json_encode($arrRespuesta, JSON_UNESCAPED_UNICODE);
 		die();
 	}
+
 	//Metodo para obtener todos los usuarios
 	public function saveInfoUserController()
 	{
@@ -72,12 +75,39 @@ class GestorUsuarios extends Facade
 			$CorreoUsuario = limpiar_cadena($_POST['CorreoUsuario']);
 			$rolUsuario = limpiar_cadena($_POST['rolUsuario']);
 
-			$peticion = $this->saveUsuario($nombreUsuario, $cedulaUsuario, $CorreoUsuario, $rolUsuario);
+			if (
+				!empty($nombreUsuario) && $nombreUsuario !== null &&
+				!empty($cedulaUsuario) && $cedulaUsuario !== null &&
+				!empty($CorreoUsuario) && $CorreoUsuario !== null &&
+				!empty($rolUsuario) && $rolUsuario !== null
+			) {
 
-			if ($peticion > 0) {
-				$arrRespuesta = array('status' => 'success', 'msg' => 'Usuario agregado satisfactoriamente');
+				$ObtenerUsuario = $this->consultarUsuarioRecoverPassword($CorreoUsuario);
+				if (!$ObtenerUsuario) {
+
+					$peticion = $this->saveUsuario($nombreUsuario, $cedulaUsuario, $CorreoUsuario, $rolUsuario);
+
+					if ($peticion > 0) {
+
+						$body = utf8_decode('
+							Hola ' . $nombreUsuario . ' <br> 
+							Has sido añadido al sistema de UNIAJC MAPS y tus credenciales serán las siguientes: <br>
+							<b>Usuario</b>: ' . $CorreoUsuario . ' <br>
+							<b>Contraseña</b>: Su # de Indentificación. <br> <br>
+							Gracias por su atención.
+						');
+
+						$correoEnviado = sendOwnEmail($CorreoUsuario, 'Usuario nuevo UNIAJC MAPS', $body);
+
+						$arrRespuesta = ($correoEnviado['status'] == "success") ? $correoEnviado : array('status' => 'warning', 'msg' => 'Usuario guardado correctamente pero el correo no se logró enviar.');
+					} else {
+						$arrRespuesta = array('status' => 'error', 'msg' => 'Usuario no se logró registrar.');
+					}
+				} else {
+					$arrRespuesta = array('status' => 'error', 'msg' => 'El usuario que trata ingresar ya existe.');
+				}
 			} else {
-				$arrRespuesta = array('status' => 'error', 'msg' => 'No se ha podido registrar');
+				$arrRespuesta = array('status' => 'error', 'msg' => 'Los campos no pueden estar vacíos.');
 			}
 		} else {
 			$arrRespuesta = array('status' => 'error', 'msg' => 'La peticion HTTP, no corresponde al método');
@@ -107,6 +137,27 @@ class GestorUsuarios extends Facade
 		die();
 	}
 
+	//Metodo para obtener todos los usuarios
+	public function enableUserController()
+	{
+		if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
+			$idUsuario = limpiar_cadena($_POST['idUsuario']);
+
+			$peticion = $this->enableUsuario($idUsuario);
+
+			if ($peticion > 0) {
+				$arrRespuesta = array('status' => 'success', 'msg' => 'Usuario agregado satisfactoriamente');
+			} else {
+				$arrRespuesta = array('status' => 'error', 'msg' => 'No se ha podido registrar');
+			}
+		} else {
+			$arrRespuesta = array('status' => 'error', 'msg' => 'La peticion HTTP, no corresponde al método');
+		}
+		echo json_encode($arrRespuesta, JSON_UNESCAPED_UNICODE);
+		die();
+	}
+
 
 	//Metodo para obtener todos los usuarios
 	public function actualizarInfoUserController()
@@ -122,7 +173,7 @@ class GestorUsuarios extends Facade
 			$peticion = $this->updateUsuario($nombreUsuario, $cedulaUsuario, $CorreoUsuario, $rolUsuario, $usu_id);
 
 			if ($peticion > 0) {
-				$arrRespuesta = array('status' => 'success', 'msg' => 'Usuario actualizaco correctamente');
+				$arrRespuesta = array('status' => 'success', 'msg' => 'Usuario actualizado correctamente');
 			} else {
 				$arrRespuesta = array('status' => 'error', 'msg' => 'No se logró actualizar');
 			}

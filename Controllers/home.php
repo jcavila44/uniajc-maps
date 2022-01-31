@@ -20,9 +20,11 @@ class Home extends Facade
 	public function __construct()
 	{
 		session_start();
-		if (!isset($_SESSION['login'])) {
+
+		if (validarSesionPorPeticion($_SESSION, $_POST, $_GET, $_FILES)) {
 			header('Location: ' . base_url() . "/Logout");
 		}
+
 		parent::__construct();
 	}
 

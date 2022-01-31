@@ -171,3 +171,131 @@ function generar_contrasena($longitud = 10)
     }
     return $contrasena;
 }
+
+function generate_Token($email)
+{
+    $expFormat = mktime(
+        date("H"),
+        date("i") + 30,
+        date("s"),
+        date("m"),
+        date("d"),
+        date("Y")
+    );
+    $date = date("Y-m-d H:i:s");
+    $expDate = date("Y-m-d H:i:s", $expFormat);
+    $KeyOperation = 1958 * 2;
+    $key = md5($KeyOperation . "&AJC&" . $email);
+    $addKey = substr(md5(uniqid(rand(), 1)), 3, 10);
+    $key = $key . $addKey;
+    $data = [
+        'token' => $key,
+        'dateNow' => $date,
+        'expDate' => $expDate,
+    ];
+    return $data;
+}
+
+
+function sendOwnEmail(String $destinatario, String $titulo, String $body)
+{
+
+    $mail = new PHPMailer(true);
+
+    try {
+        $mail->isSMTP();
+        $mail->Host       = MAIL_HOST;
+        $mail->SMTPAuth   = MAIL_SMTPAUTH;
+        $mail->Username   = MAIL_EMAIL;
+        $mail->Password   = MAIL_PASSWORD;
+        $mail->SMTPSecure = MAIL_SMTPSECURE;
+        $mail->Port       = MAIL_PORT;
+
+        $mail->setFrom(MAIL_EMAIL, MAIL_NAME_USER);
+        $mail->addAddress($destinatario);
+
+        $mail->isHTML(true);
+        $mail->Subject = $titulo;
+        $mail->Body    = $body;
+        $mail->AltBody = 'Body in plain text for non-HTML mail clients';
+        $mail->send();
+
+        return array('status' => 'success', 'msg' => 'Correo enviado satisfactoriamente.');
+    } catch (Exception $e) {
+        return array('status' => 'error', 'msg' => 'Correo no enviado');
+    }
+}
+
+
+function sessionEsValida($timeOut)
+{
+
+    $response = false;
+
+    $tiempoMaximoPermitido = 1500;
+    $tiempoInactivo = (isset($timeOut) && is_numeric($timeOut)) ? time() - $timeOut : $tiempoMaximoPermitido + 1;
+
+    $response = ($tiempoInactivo > $tiempoMaximoPermitido) ? false : true;
+
+    return $response;
+}
+
+
+function validarSesionPorPeticion($sesion, $post, $get, $files)
+{
+    $response = false;
+
+    if (!isset($sesion['login']) || (!sessionEsValida($sesion['timeout']) && (!isset($post) || !isset($get) || !isset($files)))) {
+        $response = true;
+    }
+
+    return $response;
+}
+
+
+function showRolToHome($session)
+{
+    $response = '';
+
+    switch ($session['rol_id']) {
+        case '1':
+            $response =  '
+                <h4>
+                    Bienvenido <br>
+                    ' . $session['nombre'] . ' <br>
+                    <span class="badge badge-pill badge-dark">
+                        <small style="font-weight: 500;">Eres un administrador</small>
+                    </span>
+                </h4>
+            ';
+            break;
+        case '2':
+            $response =  '
+                <h4>
+                    Bienvenido <br>
+                    ' . $session['nombre'] . ' <br>
+                    <span class="badge badge-pill badge-primary">
+                        <small style="font-weight: 500;">Eres un investigador</small>
+                    </span>
+                </h4>
+            ';
+            break;
+        case '3':
+            $response =  '
+                <h4>
+                    Bienvenido <br>
+                    ' . $session['nombre'] . ' <br>
+                    <span class="badge badge-pill badge-warning">
+                        <small style="font-weight: 500;">Eres un invitado</small>
+                    </span>
+                </h4>
+            ';
+            break;
+
+        default:
+            $response = '';
+            break;
+    }
+
+    return $response;
+}

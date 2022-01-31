@@ -6,16 +6,24 @@ date_default_timezone_set('America/Bogota');
 const PROJECT_NAME = "UNIAJC MAPS";
 
 //Ruta del proyecto
-const BASE_URL = "http://localhost:8080/uniajc-maps/";
+const BASE_URL = "";
 
 
 //Datos de conexion Base de datos
-const DB_HOST = "";
-const DB_USER = "";
+const DB_HOST = "127.0.0.1";
+const DB_USER = "root";
 const DB_PASSWORD = "";
-const DB_NAME = "";
-const DB_CHARSET = "";
-const DB_DRIVER = "";
+const DB_NAME = "uniajc_maps";
+const DB_CHARSET = "charset=utf8";
+const DB_DRIVER = "mysql";
+
+const MAIL_HOST       = 'smtp.office365.com';
+const MAIL_SMTPAUTH   = true;
+const MAIL_NAME_USER  = 'Uniajc-Maps';
+const MAIL_EMAIL      = '';
+const MAIL_PASSWORD   = '';
+const MAIL_SMTPSECURE = 'tls';
+const MAIL_PORT       = 587;
 
 const ROUTES =
 [
@@ -23,6 +31,8 @@ const ROUTES =
     'Home' => BASE_URL . 'home',
     'Start' => BASE_URL . 'start',
     'Login' => BASE_URL . 'login',
+    'ForgotPassword' => BASE_URL . 'login/forgotPassword',
+    'EmailSendForgotPassword' => BASE_URL . 'login/emailSendForgotPassword',
     'Logout' => BASE_URL . 'login/logout',
     'UserProfile' => BASE_URL . 'login/userprofile',
     'GestorUsuario' => BASE_URL . 'gestorusuarios',

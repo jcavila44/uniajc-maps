@@ -25,7 +25,7 @@ $data['page_functions_js'] = 'function_login.js';
                     <i class="icon-user"></i>
                   </span>
                 </div>
-                <input id="correo" name="correo" class="form-control" type="text" placeholder="Correo" value="jcavila@estudiante.uniajc.edu.co">
+                <input id="correo" name="correo" class="form-control" type="text" placeholder="Correo">
               </div>
               <div class="input-group mb-4">
                 <div class="input-group-prepend">
@@ -33,14 +33,14 @@ $data['page_functions_js'] = 'function_login.js';
                     <i class="icon-lock"></i>
                   </span>
                 </div>
-                <input id="password" name="password" class="form-control" type="password" placeholder="Contraseña" value="1144211277">
+                <input id="password" name="password" class="form-control" type="password" placeholder="Contraseña">
               </div>
               <div class="row">
                 <div class="col-6">
                   <button onclick="onClickIngresar()" class="btn btn-primary px-4" type="button">Ingresar</button>
                 </div>
                 <div class="col-6 text-right">
-                  <button class="btn btn-link px-0" type="button">Forgot password?</button>
+                  <a href="<?php echo ROUTES['app']['ForgotPassword'] ?>" class="btn btn-link px-0" type="button">Recuperar contraseña</a>
                 </div>
               </div>
             </div>
