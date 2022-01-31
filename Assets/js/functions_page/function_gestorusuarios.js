@@ -182,43 +182,46 @@ const consultarRolesUsuarios = () => {
 const guardarInformacionUsuario = ({ nombreUsuario, cedulaUsuario, CorreoUsuario, rolUsuario }) => {
 
   setTimeout(() => { overlay(true) }, 500);
-
-  const dataForm = {
-    nombreUsuario: String(wordToCamelCase(nombreUsuario)),
-    cedulaUsuario: String(cedulaUsuario),
-    CorreoUsuario: String(CorreoUsuario),
-    rolUsuario: parseInt(rolUsuario),
-  }
-
-  $.ajax({
-    url: base_url + 'gestorusuarios/saveInfoUserController',
-    type: "POST",
-    data: dataForm,
-    dataType: "json",
-    success: (objData) => {
-      overlay(false);
-
-      if (objData.status === "success") {
-        Swal.fire({
-          icon: "success",
-          html: `<h3>Usuario guardado correctamente. <br> Recuerde que la contraseña será enviada al correo correspondiente.</h3>`,
-          showConfirmButton: true,
-          confirmButtonText: 'Continuar',
-          confirmButtonColor: '#0069d9',
-          showCancelButton: false,
-        }).then((result) => {
-          setTimeout(() => { getAllUsers() }, 300);
-        })
-
-      } else {
-        message(objData.msg, "warning");
-      }
-
-    },
-    error: (error) => {
-      message("Ocurrió un error en la inserción, por favor revisar los datos enviados", "error");
+  setTimeout(() => {
+    const dataForm = {
+      nombreUsuario: String(wordToCamelCase(nombreUsuario)),
+      cedulaUsuario: String(cedulaUsuario),
+      CorreoUsuario: String(CorreoUsuario),
+      rolUsuario: parseInt(rolUsuario),
     }
-  });
+
+    $.ajax({
+      url: base_url + 'gestorusuarios/saveInfoUserController',
+      type: "POST",
+      data: dataForm,
+      dataType: "json",
+      success: (objData) => {
+        overlay(false);
+
+        if (objData.status === "success") {
+          Swal.fire({
+            icon: "success",
+            html: `<h3>Usuario guardado correctamente. <br> Recuerde que la contraseña será enviada al correo correspondiente.</h3>`,
+            showConfirmButton: true,
+            confirmButtonText: 'Continuar',
+            confirmButtonColor: '#0069d9',
+            showCancelButton: false,
+          }).then((result) => {
+            setTimeout(() => { getAllUsers() }, 300);
+          })
+
+        } else {
+          overlay(false);
+          message(objData.msg, "warning");
+        }
+
+      },
+      error: (error) => {
+        message("Ocurrió un error en la inserción, por favor revisar los datos enviados", "error");
+      }
+    });
+
+  }, 500);
 
 
 }

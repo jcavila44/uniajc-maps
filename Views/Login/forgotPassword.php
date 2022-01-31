@@ -9,7 +9,7 @@
                 <div class="card-group">
                     <div class="card p-4">
                         <div class="card-body">
-                            <h1>Forgot Password</h1>
+                            <h1>Recuperar contraseña</h1>
                             <p class="text-muted">Ingresa el correo de la cuenta para recuperar la contraseña</p>
                             <div class="input-group mb-3">
                                 <div class="input-group-prepend">
@@ -17,7 +17,7 @@
                                         <i class="icon-user"></i>
                                     </span>
                                 </div>
-                                <input id="correo" name="correo" class="form-control" type="text" placeholder="Correo" value="jjosecastro@estudiante.uniajc.edu.co">
+                                <input id="correo" name="correo" class="form-control" type="text" placeholder="Correo">
                             </div>
                             <div class="row">
                                 <div class="col-8 p-0">

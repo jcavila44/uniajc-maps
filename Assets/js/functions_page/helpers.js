@@ -73,6 +73,8 @@ const wordToCamelCase = (str) => {
 
   if (str !== '' || str !== null || str !== 'null' || str !== undefined || str !== 'undefined') {
 
+    str = (str.trim()).replace(/\s+/g, ' ');
+
     response = str
       .toLowerCase()
       .split(' ')

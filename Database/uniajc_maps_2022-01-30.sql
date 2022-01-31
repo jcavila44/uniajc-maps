@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 30-01-2022 a las 04:28:36
+-- Tiempo de generación: 31-01-2022 a las 05:50:35
 -- Versión del servidor: 10.4.14-MariaDB
 -- Versión de PHP: 7.4.10
 
@@ -44,8 +44,8 @@ INSERT INTO `estado` (`estado_id`, `estado_descripcion`, `est_tip_id`) VALUES
 (10, 'mapa inactivo', 2),
 (11, 'capa activa', 3),
 (12, 'capa inactiva', 3),
-(13, 'Token vigente', 4),
-(14, 'Token vencido', 4);
+(13, 'token vigente', 4),
+(14, 'token vencido', 4);
 
 -- --------------------------------------------------------
 
@@ -66,7 +66,7 @@ INSERT INTO `estado_tipo` (`est_tip_id`, `est_tip_descripcion`) VALUES
 (1, 'estado usuarios'),
 (2, 'estado mapas'),
 (3, 'estado capas'),
-(4, 'Estado token');
+(4, 'estado token');
 
 -- --------------------------------------------------------
 
@@ -82,15 +82,6 @@ CREATE TABLE `mapa` (
   `est_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
---
--- Volcado de datos para la tabla `mapa`
---
-
-INSERT INTO `mapa` (`mapa_id`, `mapa_nombre`, `mapa_descripcion`, `mapa_ruta`, `est_id`) VALUES
-(1, 'Prueba mapa 4', 'Descripcion de prueba 4', './temp/2022-01-27_00-12-24/index.html', 9),
-(2, 'testin admins x2', 'test', './temp/2022-01-29_22-24-47/index.html', 9),
-(3, 'mirelo mijo el fino', 'fino', './temp/2022-01-29_22-25-43/index.html', 9);
-
 -- --------------------------------------------------------
 
 --
@@ -102,16 +93,6 @@ CREATE TABLE `mapa_usuario` (
   `mapa_id` int(11) NOT NULL,
   `usu_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Volcado de datos para la tabla `mapa_usuario`
---
-
-INSERT INTO `mapa_usuario` (`mapa_user_id`, `mapa_id`, `usu_id`) VALUES
-(12, 1, 3),
-(13, 2, 4),
-(14, 3, 4),
-(15, 3, 3);
 
 -- --------------------------------------------------------
 
@@ -148,14 +129,6 @@ CREATE TABLE `token` (
   `est_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
---
--- Volcado de datos para la tabla `token`
---
-
-INSERT INTO `token` (`token_id`, `token`, `token_fecha`, `token_fecha_vencido`, `usu_id`, `est_id`) VALUES
-(44, '9c584f36c183af9739d5b84b70f5346ecbe4f532d0', '2022-01-27', '2022-01-27 00:43:37', 1, 14),
-(45, '88ae0f3516ed48ba46deb6ab8331cca90401949094', '2022-01-29', '2022-01-29 17:41:33', 2, 13);
-
 -- --------------------------------------------------------
 
 --
@@ -177,10 +150,7 @@ CREATE TABLE `usuario` (
 --
 
 INSERT INTO `usuario` (`usu_id`, `usu_cedula`, `usu_correo`, `usu_nombre`, `usu_password`, `rol_id`, `est_id`) VALUES
-(1, '1144211277', 'jcavila@estudiante.uniajc.edu.co', 'Jose Carlos Avila Perea', '12Bz/9hNlPLZk', 1, 7),
-(2, '1143879187', 'jjosecastro@estudiante.uniajc.edu.co', 'Juan Jose Castro', '4cJ4k/vxGVG/6', 1, 8),
-(3, '123', 'investigador@test.com', 'Pepiro Perez', '4cyzrsRzvV9CQ', 2, 7),
-(4, '12345', 'invitado@test.com', 'Jose Luis Carlos Luis Eiless', '4c0ozS3UalY7g', 3, 7);
+(2, '1143879187', 'jjosecastro@estudiante.uniajc.edu.co', 'Juan Jose Castro', '4cuxs7nCUchVE', 1, 7);
 
 --
 -- Índices para tablas volcadas
@@ -256,13 +226,13 @@ ALTER TABLE `estado_tipo`
 -- AUTO_INCREMENT de la tabla `mapa`
 --
 ALTER TABLE `mapa`
-  MODIFY `mapa_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `mapa_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `mapa_usuario`
 --
 ALTER TABLE `mapa_usuario`
-  MODIFY `mapa_user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `mapa_user_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `rol`
@@ -274,13 +244,13 @@ ALTER TABLE `rol`
 -- AUTO_INCREMENT de la tabla `token`
 --
 ALTER TABLE `token`
-  MODIFY `token_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=46;
+  MODIFY `token_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `usuario`
 --
 ALTER TABLE `usuario`
-  MODIFY `usu_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `usu_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- Restricciones para tablas volcadas

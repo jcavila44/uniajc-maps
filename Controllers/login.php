@@ -30,7 +30,7 @@ class Login extends Facade
 			header('Location: ' . base_url() . 'home');
 		} else {
 			if (isset($_SESSION['ForgotEmailSended']) && $_SESSION['ForgotEmailSended'] == 1) {
-				header('Location: ' . base_url() . 'login/emailSendForgotPassword?e='.$_SESSION['emailUser']);
+				header('Location: ' . base_url() . 'login/emailSendForgotPassword?e=' . $_SESSION['emailUser']);
 			}
 		}
 		parent::__construct();
@@ -115,7 +115,7 @@ class Login extends Facade
 					if ($ObtenerUsuario['estado_id'] == 7) {
 
 						$_SESSION['login'] = true;
- 						$_SESSION['idusuario'] = $ObtenerUsuario['usu_id'];
+						$_SESSION['idusuario'] = $ObtenerUsuario['usu_id'];
 						$_SESSION['correo'] = $ObtenerUsuario['usu_correo'];
 						$_SESSION['nombre'] = $ObtenerUsuario['usu_nombre'];
 						$_SESSION['cedula'] = $ObtenerUsuario['usu_cedula'];
@@ -145,39 +145,19 @@ class Login extends Facade
 
 			$ObtenerUsuario = $this->consultarUsuarioRecoverPassword($correo);
 			if ($ObtenerUsuario && $correo == $ObtenerUsuario['usu_correo']) {
-				
+
 				$data = generate_Token($correo);
-				$this->saveTokenModel($data['dateNow'], $data['expDate'], $data['token'], $ObtenerUsuario['usu_id']);
-				
-				
-				
-				$mail = new PHPMailer(true);
-				
-				try {
-					$mail->isSMTP();
-					$mail->Host       = 'smtp.office365.com;';
-					$mail->SMTPAuth   = true;
-					$mail->CharSet = 'UTF-8';
-					$mail->Username   = 'jjosecastro@estudiante.uniajc.edu.co';
-					$mail->Password   = '990804Cafeto6';
-					$mail->SMTPSecure = 'tls';
-					$mail->Port       = 587;
-					
-					$mail->setFrom('jjosecastro@estudiante.uniajc.edu.co', 'Juan Jose Castro Cruz');
-					$mail->addAddress($correo);
-					
-					$mail->isHTML(true);
-					$mail->Subject = 'Recover password UNIAJC MAPS';
-					$mail->Body    = 'Hola ' . $correo . ' este es tu link de recuperacion de la contraseña <a href="' . base_url() . 'login/TokenValidation?token=' . $data['token'] . '" > Link de recuperacion </a> Tienes 30minutos antes de que expire, tu oportunidad de recuperar contraseña';
-					$mail->AltBody = 'Body in plain text for non-HTML mail clients';
-					$mail->send();
-					
+				$peticion = $this->saveTokenModel($data['dateNow'], $data['expDate'], $data['token'], $ObtenerUsuario['usu_id']);
+
+				if ($peticion > 0) {
+
+					$body = 'Hola ' . $correo . ' este es el link de recuperacion de tu contraseña <a href="' . base_url() . 'login/TokenValidation?token=' . $data['token'] . '" > Link de recuperacion </a> Tienes 30 minutos antes de que expire, es la oportunidad de recuperar contraseña.';
 					$_SESSION['ForgotEmailSended'] = 1;
 					$_SESSION['emailUser'] = $correo;
-					
-					$arrRespuesta = array('status' => 'success', 'msg' => 'El correo se ha enviado correctamente', 'test' => $_SESSION);
-				} catch (Exception $e) {
-					$arrRespuesta = array('status' => 'error', 'msg' => 'El correo no se ha enviado correctamente ' . $mail->ErrorInfo . '');
+					$correoEnviado = sendOwnEmail($correo, 'Recover password UNIAJC MAPS', $body);
+					$arrRespuesta = ($correoEnviado['status'] == "success") ? $correoEnviado : array('status' => 'error', 'msg' => 'El correo no se ha enviado correctamente');
+				} else {
+					$arrRespuesta = array('status' => 'error', 'msg' => 'El token no se logró guardar.');
 				}
 			} else {
 				$arrRespuesta = array('status' => 'error', 'msg' => 'El usuario no fue encontrado');

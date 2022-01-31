@@ -13,8 +13,8 @@
                 <div class="card-group">
                     <div class="card p-4">
                         <div class="card-body">
-                            <h1>Hemos enviado el link de recuperacion</h1>
-                            <p class="text-muted">Al correo <?php echo $data['emailUser'] ?> Ahí encontrarás las instrucciones de recuperacion de tu contraseña.</p>
+                            <h1>Hemos enviado el link de recuperación</h1>
+                            <p class="text-muted">En el correo <span class="badge badge-secondary"><?php echo $data['emailUser'] ?></span> encontrarás las instrucciones para la recuperación de tu contraseña.</p>
                             <div class="row">
                                 <div class="col-6">
                                     <a href="<?php echo ROUTES['app']['Login'] ?>" class="btn btn-primary px-4" type="button">Regresar al Login</a>

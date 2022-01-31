@@ -105,6 +105,9 @@ const AddMapas = () => {
     dataType: "json",
     beforeSend: () => { overlay(true) },
     success: (objData) => {
+
+      const usuId = $("#usu_id").val();
+
       let htmlModal = `
       <div class="col-mb-12 m-2 p-2" style="font-size: 14px; text-align: left; overflow: hidden;">
       <form id="formAgregarMapa">
@@ -131,7 +134,7 @@ const AddMapas = () => {
 
       objData.data.forEach((User) => {
 
-        htmlModal += `<option value="${User.usu_id}" dataName="${User.usu_nombre}">${User.usu_nombre}</option>`
+        htmlModal += `<option ${(usuId === User.usu_id) ? 'selected': ''} value="${User.usu_id}" dataName="${User.usu_nombre}">${User.usu_nombre}</option>`
       });
 
       htmlModal += `</select>
@@ -326,6 +329,8 @@ const onSubmitFormularioAgregarMapa = () => {
           message(msg, status);
         } else {
 
+          debugger;
+
           if (document.getElementById("UserList").selectedOptions.length == 0) {
 
             addOrRemoveRelationMapaUser(idRegistered);
@@ -397,6 +402,7 @@ const editarMapa = (allDataMapa) => {
 
       if (rolId == 1) {
         htmlModal += `
+          <label for="name">Permisos de usuario</label>
           <select id="UserListEdit" data-size="5" data-live-search="true" multiple style="width: 100%">
         `;
 
